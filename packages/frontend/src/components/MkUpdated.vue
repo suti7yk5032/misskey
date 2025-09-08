@@ -10,7 +10,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<div :class="$style.version">✨{{ version }}🚀</div>
 		<div v-if="isBeta" :class="$style.beta">{{ i18n.ts.thankYouForTestingBeta }}</div>
 		<MkButton full @click="whatIsNew">{{ i18n.ts.whatIsNew }}</MkButton>
-		<MkButton full @click="whatIsNewFork">{{ i18n.ts.whatIsNewFork }}</MkButton>
+		<MkButton :class="$style.whatIsNewFork" full @click="whatIsNewFork">{{ i18n.ts.whatIsNewFork }}</MkButton>
 		<MkButton :class="$style.gotIt" primary full @click="modal?.close()">{{ i18n.ts.gotIt }}</MkButton>
 	</div>
 </MkModal>
@@ -69,6 +69,10 @@ onMounted(() => {
 
 .beta {
 	margin: 1em 0;
+}
+
+.whatIsNewFork {
+	margin: 8px 0 0 0;
 }
 
 .gotIt {
