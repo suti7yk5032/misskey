@@ -5537,10 +5537,10 @@ export interface Locale extends ILocale {
      * この日の
      */
     "recall": string;
-		/**
-		 * フォークの更新情報を見る
-		 */
-		"whatIsNewFork": string;
+    /**
+     * フォークの更新情報を見る
+     */
+    "whatIsNewFork": string;
     "_order": {
         /**
          * 新しい順
