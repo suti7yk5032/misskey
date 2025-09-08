@@ -1337,6 +1337,7 @@ pluginsAreDisabledBecauseSafeMode: "セーフモードがオンやから、プ�
 customCssIsDisabledBecauseSafeMode: "セーフモードがオンやから、カスタムCSSは適用されてへんで。"
 themeIsDefaultBecauseSafeMode: "セーフモードがオンの間はデフォルトのテーマを使うで。セーフモードをオフにれば元に戻るで。"
 emojisManager: "絵文字マネージャー"
+recall: "この日の"
 
 _chat:
   noMessagesYet: "まだメッセージはあらへんで"

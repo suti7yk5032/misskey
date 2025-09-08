@@ -1378,6 +1378,7 @@ customCssIsDisabledBecauseSafeMode: "セーフモードが有効なため、カ�
 themeIsDefaultBecauseSafeMode: "セーフモードが有効な間はデフォルトのテーマが使用されます。セーフモードをオフにすると元に戻ります。"
 thankYouForTestingBeta: "ベータ版の検証にご協力いただきありがとうございます！"
 emojisManager: "絵文字マネージャー"
+recall: "この日の"
 
 _order:
   newest: "新しい順"

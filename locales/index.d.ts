@@ -5533,6 +5533,10 @@ export interface Locale extends ILocale {
      * 絵文字マネージャー
      */
     "emojisManager": string;
+    /**
+     * この日の
+     */
+    "recall": string;
     "_order": {
         /**
          * 新しい順
