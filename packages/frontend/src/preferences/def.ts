@@ -293,10 +293,10 @@ export const PREF_DEF = definePreferences({
 		default: false,
 	},
 	reactionsDisplaySize: {
-		default: 'medium' as 'small' | 'medium' | 'large',
+		default: 'large' as 'small' | 'medium' | 'large',
 	},
 	limitWidthOfReaction: {
-		default: true,
+		default: false,
 	},
 	forceShowAds: {
 		default: false,
