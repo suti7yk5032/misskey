@@ -10,6 +10,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<div :class="$style.version">✨{{ version }}🚀</div>
 		<div v-if="isBeta" :class="$style.beta">{{ i18n.ts.thankYouForTestingBeta }}</div>
 		<MkButton full @click="whatIsNew">{{ i18n.ts.whatIsNew }}</MkButton>
+		<MkButton full @click="whatIsNewFork">{{ i18n.ts.whatIsNewFork }}</MkButton>
 		<MkButton :class="$style.gotIt" primary full @click="modal?.close()">{{ i18n.ts.gotIt }}</MkButton>
 	</div>
 </MkModal>
@@ -30,7 +31,12 @@ const isBeta = version.includes('-beta') || version.includes('-alpha') || versio
 
 function whatIsNew() {
 	modal.value?.close();
-	window.open(`https://misskey-hub.net/docs/releases/#_${version.replace(/\./g, '')}`, '_blank');
+	window.open(`https://misskey-hub.net/docs/releases/#_${version.replace(/-suti7.*$/, '').replace(/\./g, '')}`, '_blank');
+}
+
+function whatIsNewFork() {
+	modal.value?.close();
+	window.open(`https://github.com/suti7yk5032/misskey/releases/tag/${version}`, '_blank');
 }
 
 onMounted(() => {

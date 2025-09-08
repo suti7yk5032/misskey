@@ -1379,6 +1379,7 @@ themeIsDefaultBecauseSafeMode: "While safe mode is active, the default theme is 
 thankYouForTestingBeta: "Thank you for helping us test the beta version!"
 emojisManager: "Emoji Manager"
 recall: "Recall"
+whatIsNewFork: "Show changes in fork"
 
 _order:
   newest: "Newest First"
