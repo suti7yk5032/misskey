@@ -1336,6 +1336,8 @@ safeModeEnabled: "セーフモードがオンになってるで"
 pluginsAreDisabledBecauseSafeMode: "セーフモードがオンやから、プラグインは全部無効化されてるで。"
 customCssIsDisabledBecauseSafeMode: "セーフモードがオンやから、カスタムCSSは適用されてへんで。"
 themeIsDefaultBecauseSafeMode: "セーフモードがオンの間はデフォルトのテーマを使うで。セーフモードをオフにれば元に戻るで。"
+emojisManager: "絵文字マネージャー"
+
 _chat:
   noMessagesYet: "まだメッセージはあらへんで"
   individualChat_description: "特定のユーザーと一対一でチャットができるで。"
@@ -2038,6 +2040,7 @@ _serverDisconnectedBehavior:
   reload: "自動でリロード"
   dialog: "ダイアログで警告"
   quiet: "控えめに警告"
+  mute: "警告を表示せん"
 _channel:
   create: "チャンネル作る"
   edit: "チャンネルいじる"
@@ -2843,6 +2846,9 @@ _gridComponent:
 _roleSelectDialog:
   notSelected: "選択されとらんで"
 _customEmojisManager:
+  _header:
+    switchToNewEmojiManager: "新しい絵文字マネージャーに切り替えるで (試験的やで)"
+    switchToOldEmojiManager: "従来の絵文字マネージャーに戻すで"
   _gridCommon:
     copySelectionRows: "選択行をコピーするで"
     copySelectionRanges: "選択範囲をコピーするで"

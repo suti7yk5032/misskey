@@ -1377,6 +1377,7 @@ pluginsAreDisabledBecauseSafeMode: "セーフモードが有効なため、プ�
 customCssIsDisabledBecauseSafeMode: "セーフモードが有効なため、カスタムCSSは適用されていません。"
 themeIsDefaultBecauseSafeMode: "セーフモードが有効な間はデフォルトのテーマが使用されます。セーフモードをオフにすると元に戻ります。"
 thankYouForTestingBeta: "ベータ版の検証にご協力いただきありがとうございます！"
+emojisManager: "絵文字マネージャー"
 
 _order:
   newest: "新しい順"
@@ -2183,6 +2184,7 @@ _serverDisconnectedBehavior:
   reload: "自動でリロード"
   dialog: "ダイアログで警告"
   quiet: "控えめに警告"
+  mute: "警告を表示しない"
 
 _channel:
   create: "チャンネルを作成"
@@ -3060,6 +3062,9 @@ _roleSelectDialog:
   notSelected: "選択されていません"
 
 _customEmojisManager:
+  _header:
+    switchToNewEmojiManager: "新しい絵文字マネージャーに切り替え (試験的)"
+    switchToOldEmojiManager: "従来の絵文字マネージャーに切り替え"
   _gridCommon:
     copySelectionRows: "選択行をコピー"
     copySelectionRanges: "選択範囲をコピー"

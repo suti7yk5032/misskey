@@ -6,7 +6,7 @@
 import { defineAsyncComponent } from 'vue';
 import type { AsyncComponentLoader } from 'vue';
 import type { RouteDef } from '@/lib/nirax.js';
-import { $i, iAmModerator } from '@/i.js';
+import { $i, iAmEmojiManager, iAmModerator } from '@/i.js';
 import MkLoading from '@/pages/_loading_.vue';
 import MkError from '@/pages/_error_.vue';
 import PageTimeline from '@/pages/timeline.vue';
@@ -355,7 +355,10 @@ export const ROUTE_DEF = [{
 	component: page(() => import('@/pages/channels.vue')),
 }, {
 	path: '/custom-emojis-manager',
-	component: page(() => import('@/pages/custom-emojis-manager.vue')),
+	component: iAmEmojiManager ? page(() => import('@/pages/custom-emojis-manager.vue')) : page(() => import('@/pages/not-found.vue')),
+}, {
+	path: '/custom-emojis-manager2',
+	component: iAmEmojiManager ? page(() => import('@/pages/admin/custom-emojis-manager2.vue')) : page(() => import('@/pages/not-found.vue')),
 }, {
 	path: '/avatar-decorations',
 	name: 'avatarDecorations',

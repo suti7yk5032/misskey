@@ -1377,6 +1377,8 @@ pluginsAreDisabledBecauseSafeMode: "All plugins are disabled because safe mode i
 customCssIsDisabledBecauseSafeMode: "Custom CSS is not applied because safe mode is enabled."
 themeIsDefaultBecauseSafeMode: "While safe mode is active, the default theme is used. Disabling safe mode will revert these changes."
 thankYouForTestingBeta: "Thank you for helping us test the beta version!"
+emojisManager: "Emoji Manager"
+
 _order:
   newest: "Newest First"
   oldest: "Oldest First"
@@ -2146,6 +2148,7 @@ _serverDisconnectedBehavior:
   reload: "Automatically reload"
   dialog: "Show warning dialog"
   quiet: "Show unobtrusive warning"
+  mute: "Hide warning"
 _channel:
   create: "Create channel"
   edit: "Edit channel"
@@ -2970,6 +2973,9 @@ _gridComponent:
 _roleSelectDialog:
   notSelected: "Not selected"
 _customEmojisManager:
+  _header:
+    switchToNewEmojiManager: "Switch to new emoji manager (Beta)"
+    switchToOldEmojiManager: "Switch to old emoji manager"
   _gridCommon:
     copySelectionRows: "Copy selected rows"
     copySelectionRanges: "Copy selection"

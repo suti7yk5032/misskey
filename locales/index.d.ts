@@ -5529,6 +5529,10 @@ export interface Locale extends ILocale {
      * ベータ版の検証にご協力いただきありがとうございます！
      */
     "thankYouForTestingBeta": string;
+    /**
+     * 絵文字マネージャー
+     */
+    "emojisManager": string;
     "_order": {
         /**
          * 新しい順
@@ -8350,6 +8354,10 @@ export interface Locale extends ILocale {
          * 控えめに警告
          */
         "quiet": string;
+        /**
+         * 警告を表示しない
+         */
+        "mute": string;
     };
     "_channel": {
         /**
@@ -11486,6 +11494,16 @@ export interface Locale extends ILocale {
         "notSelected": string;
     };
     "_customEmojisManager": {
+        "_header": {
+            /**
+             * 新しい絵文字マネージャーに切り替え (試験的)
+             */
+            "switchToNewEmojiManager": string;
+            /**
+             * 従来の絵文字マネージャーに切り替え
+             */
+            "switchToOldEmojiManager": string;
+        };
         "_gridCommon": {
             /**
              * 選択行をコピー

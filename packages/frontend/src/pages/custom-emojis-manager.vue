@@ -85,6 +85,7 @@ import { getProxiedImageUrl } from '@/utility/media-proxy.js';
 import { i18n } from '@/i18n.js';
 import { definePage } from '@/page.js';
 import { Paginator } from '@/utility/paginator.js';
+import { useRouter } from '@/router.js';
 
 const tab = ref('local');
 const query = ref<string | null>(null);
@@ -92,6 +93,7 @@ const queryRemote = ref<string | null>(null);
 const host = ref<string | null>(null);
 const selectMode = ref(false);
 const selectedEmojis = ref<string[]>([]);
+const router = useRouter();
 
 const paginator = markRaw(new Paginator('admin/emoji/list', {
 	limit: 30,
@@ -310,6 +312,12 @@ const headerActions = computed(() => [{
 	icon: 'ti ti-plus',
 	text: i18n.ts.addEmoji,
 	handler: add,
+}, {
+	icon: 'ti ti-number-2',
+	text: i18n.ts._customEmojisManager._header.switchToNewEmojiManager,
+	handler: () => {
+		router.push('/custom-emojis-manager2');
+	},
 }, {
 	icon: 'ti ti-dots',
 	text: i18n.ts.more,
