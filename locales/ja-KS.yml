@@ -1338,6 +1338,7 @@ customCssIsDisabledBecauseSafeMode: "セーフモードがオンやから、カ�
 themeIsDefaultBecauseSafeMode: "セーフモードがオンの間はデフォルトのテーマを使うで。セーフモードをオフにれば元に戻るで。"
 emojisManager: "絵文字マネージャー"
 recall: "この日の"
+recallDays: "遡る日数"
 whatIsNewFork: "フォークの更新情報を見るで"
 
 _chat:

@@ -28,6 +28,7 @@ import XRoles from './explore.roles.vue';
 import XRecall from './explore.recall.vue';
 import { definePage } from '@/page.js';
 import { i18n } from '@/i18n.js';
+import { $i } from '@/i.js';
 
 const props = withDefaults(defineProps<{
 	initialTab?: string;
@@ -39,7 +40,7 @@ const tab = ref(props.initialTab);
 
 const headerActions = computed(() => []);
 
-const headerTabs = computed(() => [{
+const tabs = [{
 	key: 'featured',
 	icon: 'ti ti-bolt',
 	title: i18n.ts.featured,
@@ -51,11 +52,17 @@ const headerTabs = computed(() => [{
 	key: 'roles',
 	icon: 'ti ti-badges',
 	title: i18n.ts.roles,
-}, {
-	key: 'recall',
-	icon: 'ti ti-clock-hour-2',
-	title: i18n.ts.recall,
-}]);
+}];
+
+if ( $i != null ) {
+	tabs.push({
+		key: 'recall',
+		icon: 'ti ti-clock-hour-2',
+		title: i18n.ts.recall,
+	});
+}
+
+const headerTabs = computed(() => tabs);
 
 definePage(() => ({
 	title: i18n.ts.explore,

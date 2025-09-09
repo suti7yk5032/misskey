@@ -5538,6 +5538,10 @@ export interface Locale extends ILocale {
      */
     "recall": string;
     /**
+     * 遡る日数
+     */
+    "recallDays": string;
+    /**
      * フォークの更新情報を見る
      */
     "whatIsNewFork": string;
