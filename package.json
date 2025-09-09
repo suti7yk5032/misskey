@@ -1,10 +1,10 @@
 {
 	"name": "misskey",
-	"version": "2025.9.0-suti7.0",
+	"version": "2025.9.0-suti7.1",
 	"codename": "nasubi",
 	"repository": {
 		"type": "git",
-		"url": "https://github.com/misskey-dev/misskey.git"
+		"url": "https://github.com/suti7yk5032/misskey.git"
 	},
 	"packageManager": "pnpm@10.15.1",
 	"workspaces": [
