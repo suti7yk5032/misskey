@@ -48,13 +48,14 @@ const tabs = [{
 	key: 'users',
 	icon: 'ti ti-users',
 	title: i18n.ts.users,
-}, {
-	key: 'roles',
-	icon: 'ti ti-badges',
-	title: i18n.ts.roles,
 }];
 
 if ( $i != null ) {
+	tabs.push({
+		key: 'roles',
+		icon: 'ti ti-badges',
+		title: i18n.ts.roles,
+	});
 	tabs.push({
 		key: 'recall',
 		icon: 'ti ti-clock-hour-2',
