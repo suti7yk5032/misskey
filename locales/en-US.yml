@@ -1381,6 +1381,7 @@ emojisManager: "Emoji Manager"
 recall: "Recall"
 recallDays: "Days ago"
 whatIsNewFork: "Show changes in fork"
+moveWidgetsToRightSide: "Move widgets to the right side"
 
 _order:
   newest: "Newest First"

@@ -136,6 +136,7 @@ export function migrateOldSettings() {
 		prefer.commit('sound.on.reaction', store.s.sound_reaction as any);
 		prefer.commit('defaultNoteVisibility', store.s.defaultNoteVisibility);
 		prefer.commit('defaultNoteLocalOnly', store.s.defaultNoteLocalOnly);
+		prefer.commit('moveWidgetsToRightSide', store.s.moveWidgetsToRightSide);
 
 		window.setTimeout(() => {
 			unisonReload();

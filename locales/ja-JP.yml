@@ -1381,6 +1381,7 @@ emojisManager: "絵文字マネージャー"
 recall: "この日の"
 recallDays: "遡る日数"
 whatIsNewFork: "フォークの更新情報を見る"
+moveWidgetsToRightSide: "ウィジェットを右側に表示する"
 
 _order:
   newest: "新しい順"

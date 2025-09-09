@@ -715,6 +715,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 									</MkSwitch>
 								</MkPreferenceContainer>
 							</SearchMarker>
+
+							<SearchMarker :keywords="['widgets']">
+								<MkPreferenceContainer k="moveWidgetsToRightSide">
+									<MkSwitch v-model="moveWidgetsToRightSide">
+										<template #label><SearchLabel>{{ i18n.ts.moveWidgetsToRightSide }}</SearchLabel></template>
+									</MkSwitch>
+								</MkPreferenceContainer>
+							</SearchMarker>
 						</div>
 
 						<SearchMarker :keywords="['server', 'disconnect', 'reconnect', 'reload', 'streaming']">
@@ -879,6 +887,7 @@ const useNativeUiForVideoAudioPlayer = prefer.model('useNativeUiForVideoAudioPla
 const contextMenu = prefer.model('contextMenu');
 const menuStyle = prefer.model('menuStyle');
 const makeEveryTextElementsSelectable = prefer.model('makeEveryTextElementsSelectable');
+const moveWidgetsToRightSide = prefer.model('moveWidgetsToRightSide');
 
 const fontSize = ref(miLocalStorage.getItem('fontSize'));
 const useSystemFont = ref(miLocalStorage.getItem('useSystemFont') != null);
@@ -935,6 +944,7 @@ watch([
 	enablePullToRefresh,
 	reduceAnimation,
 	showAvailableReactionsFirstInNote,
+	moveWidgetsToRightSide,
 ], () => {
 	suggestReload();
 });

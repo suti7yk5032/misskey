@@ -462,6 +462,10 @@ export const store = markRaw(new Pizzax('base', {
 			sfxVolume: 1,
 		},
 	},
+	moveWidgetsToRightSide: {
+		where: 'device',
+		default: false,
+	},
 	//#endregion
 }));
 

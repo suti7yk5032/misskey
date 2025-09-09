@@ -5545,6 +5545,10 @@ export interface Locale extends ILocale {
      * フォークの更新情報を見る
      */
     "whatIsNewFork": string;
+    /**
+     * ウィジェットを右側に表示する
+     */
+    "moveWidgetsToRightSide": string;
     "_order": {
         /**
          * 新しい順

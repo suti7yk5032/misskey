@@ -48,10 +48,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 <Transition
 	:enterActiveClass="prefer.s.animation ? $style.transition_widgetsDrawer_enterActive : ''"
 	:leaveActiveClass="prefer.s.animation ? $style.transition_widgetsDrawer_leaveActive : ''"
-	:enterFromClass="prefer.s.animation ? $style.transition_widgetsDrawer_enterFrom : ''"
-	:leaveToClass="prefer.s.animation ? $style.transition_widgetsDrawer_leaveTo : ''"
+	:enterFromClass="prefer.s.animation ? (moveWidgetsToRightSide ? $style.transition_widgetsDrawer_enterFrom_rightSide : $style.transition_widgetsDrawer_enterFrom) : ''"
+	:leaveToClass="prefer.s.animation ? (moveWidgetsToRightSide ? $style.transition_widgetsDrawer_leaveTo_rightSide : $style.transition_widgetsDrawer_leaveTo) : ''"
 >
-	<div v-if="widgetsShowing" :class="$style.widgetsDrawer">
+	<div v-if="widgetsShowing" :class="[$style.widgetsDrawer, { [$style.widgetsDrawerRightSide]: moveWidgetsToRightSide }]">
 		<button class="_button" :class="$style.widgetsCloseButton" @click="widgetsShowing = false"><i class="ti ti-x"></i></button>
 		<XWidgets/>
 	</div>
@@ -104,9 +104,9 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import { defineAsyncComponent, ref, TransitionGroup } from 'vue';
 import * as Misskey from 'misskey-js';
+import { isSafeMode } from '@@/js/config.js';
 import { swInject } from './sw-inject.js';
 import XNotification from './notification.vue';
-import { isSafeMode } from '@@/js/config.js';
 import { popups } from '@/os.js';
 import { unisonReload } from '@/utility/unison-reload.js';
 import { miLocalStorage } from '@/local-storage.js';
@@ -129,6 +129,8 @@ const widgetsShowing = defineModel<boolean>('widgetsShowing');
 const dev = _DEV_;
 
 const notifications = ref<Misskey.entities.Notification[]>([]);
+
+const moveWidgetsToRightSide = ref(prefer.s.moveWidgetsToRightSide);
 
 function onNotification(notification: Misskey.entities.Notification, isClient = false) {
 	if (window.document.visibilityState === 'visible') {
@@ -211,10 +213,17 @@ if ($i) {
 	transform: translateX(0);
 	transition: transform 300ms cubic-bezier(0.23, 1, 0.32, 1), opacity 300ms cubic-bezier(0.23, 1, 0.32, 1);
 }
+
 .transition_widgetsDrawer_enterFrom,
 .transition_widgetsDrawer_leaveTo {
 	opacity: 0;
 	transform: translateX(-240px);
+}
+
+.transition_widgetsDrawer_enterFrom_rightSide,
+.transition_widgetsDrawer_leaveTo_rightSide {
+	opacity: 0;
+	transform: translateX(240px);
 }
 
 .transition_notification_move,
@@ -259,6 +268,11 @@ if ($i) {
 	overflow: auto;
 	overscroll-behavior: contain;
 	background: var(--MI_THEME-bg);
+}
+
+.widgetsDrawerRightSide {
+	left: unset;
+	right: 0;
 }
 
 .widgetsCloseButton {
