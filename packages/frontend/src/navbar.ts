@@ -6,7 +6,7 @@
 import { computed, reactive } from 'vue';
 import { ui } from '@@/js/config.js';
 import { clearCache } from './utility/clear-cache.js';
-import { $i, iAmEmojiManager } from '@/i.js';
+import { $i, iAmModerator } from '@/i.js';
 import { miLocalStorage } from '@/local-storage.js';
 import { openInstanceMenu, openToolsMenu } from '@/ui/_common_/common.js';
 import { lookup } from '@/utility/lookup.js';
@@ -185,7 +185,7 @@ export const navbarItemDef = reactive({
 	},
 });
 
-if (iAmEmojiManager === true) {
+if ($i?.policies.canManageCustomEmojis || iAmModerator) {
 	Object.assign(navbarItemDef, {
 		emojisManager: {
 			title: i18n.ts.emojisManager,
