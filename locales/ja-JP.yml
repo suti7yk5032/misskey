@@ -1382,6 +1382,7 @@ recall: "この日の"
 recallDays: "遡る日数"
 whatIsNewFork: "フォークの更新情報を見る"
 moveWidgetsToRightSide: "ウィジェットを右側に表示する"
+adsManager: "広告マネージャー"
 
 _order:
   newest: "新しい順"
@@ -2045,6 +2046,7 @@ _role:
     uploadableFileTypes_caption2: "ファイルによっては種別を判定できないことがあります。そのようなファイルを許可する場合は {x} を指定に追加してください。"
     noteDraftLimit: "サーバーサイドのノートの下書きの作成可能数"
     watermarkAvailable: "ウォーターマーク機能の使用可否"
+    canManageAds: "広告の管理"
   _condition:
     roleAssignedTo: "マニュアルロールにアサイン済み"
     isLocal: "ローカルユーザー"

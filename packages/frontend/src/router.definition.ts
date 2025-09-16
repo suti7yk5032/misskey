@@ -6,7 +6,7 @@
 import { defineAsyncComponent } from 'vue';
 import type { AsyncComponentLoader } from 'vue';
 import type { RouteDef } from '@/lib/nirax.js';
-import { $i, iAmModerator } from '@/i.js';
+import { $i, iAmAdmin, iAmModerator } from '@/i.js';
 import MkLoading from '@/pages/_loading_.vue';
 import MkError from '@/pages/_error_.vue';
 import PageTimeline from '@/pages/timeline.vue';
@@ -229,6 +229,9 @@ export const ROUTE_DEF = [{
 	path: '/ads',
 	component: page(() => import('@/pages/ads.vue')),
 }, {
+	path: '/ads_manager',
+	component: (iAmAdmin || $i?.policies.canManageAds) ? page(() => import('@/pages/admin/ads.vue')) : page(() => import('@/pages/not-found.vue')),
+}, {
 	path: '/theme-editor',
 	component: page(() => import('@/pages/theme-editor.vue')),
 	loginRequired: true,
@@ -355,10 +358,10 @@ export const ROUTE_DEF = [{
 	component: page(() => import('@/pages/channels.vue')),
 }, {
 	path: '/custom-emojis-manager',
-	component: ($i?.policies.canManageCustomEmojis || iAmModerator) ? page(() => import('@/pages/custom-emojis-manager.vue')) : page(() => import('@/pages/not-found.vue')),
+	component: (iAmAdmin || $i?.policies.canManageCustomEmojis) ? page(() => import('@/pages/custom-emojis-manager.vue')) : page(() => import('@/pages/not-found.vue')),
 }, {
 	path: '/custom-emojis-manager2',
-	component: ($i?.policies.canManageCustomEmojis || iAmModerator) ? page(() => import('@/pages/admin/custom-emojis-manager2.vue')) : page(() => import('@/pages/not-found.vue')),
+	component: (iAmAdmin || $i?.policies.canManageCustomEmojis) ? page(() => import('@/pages/admin/custom-emojis-manager2.vue')) : page(() => import('@/pages/not-found.vue')),
 }, {
 	path: '/avatar-decorations',
 	name: 'avatarDecorations',
@@ -400,11 +403,11 @@ export const ROUTE_DEF = [{
 	}, {
 		path: '/emojis',
 		name: 'emojis',
-		component: page(() => import('@/pages/custom-emojis-manager.vue')),
+		component: (iAmAdmin || $i?.policies.canManageCustomEmojis) ? page(() => import('@/pages/custom-emojis-manager.vue')) : page(() => import('@/pages/not-found.vue')),
 	}, {
 		path: '/emojis2',
 		name: 'emojis2',
-		component: page(() => import('@/pages/admin/custom-emojis-manager2.vue')),
+		component: (iAmAdmin || $i?.policies.canManageCustomEmojis) ? page(() => import('@/pages/admin/custom-emojis-manager2.vue')) : page(() => import('@/pages/not-found.vue')),
 	}, {
 		path: '/avatar-decorations',
 		name: 'avatarDecorations',
@@ -432,7 +435,7 @@ export const ROUTE_DEF = [{
 	}, {
 		path: '/ads',
 		name: 'ads',
-		component: page(() => import('@/pages/admin/ads.vue')),
+		component: (iAmAdmin || $i?.policies.canManageAds) ? page(() => import('@/pages/admin/ads.vue')) : page(() => import('@/pages/not-found.vue')),
 	}, {
 		path: '/roles/:id/edit',
 		name: 'roles',

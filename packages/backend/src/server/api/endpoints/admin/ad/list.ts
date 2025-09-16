@@ -13,7 +13,7 @@ export const meta = {
 	tags: ['admin'],
 
 	requireCredential: true,
-	requireModerator: true,
+	requiredRolePolicy: 'canManageAds',
 	kind: 'read:admin:ad',
 	res: {
 		type: 'array',

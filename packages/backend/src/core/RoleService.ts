@@ -70,6 +70,7 @@ export type RolePolicies = {
 	uploadableFileTypes: string[];
 	noteDraftLimit: number;
 	watermarkAvailable: boolean;
+	canManageAds: boolean;
 };
 
 export const DEFAULT_POLICIES: RolePolicies = {
@@ -116,6 +117,7 @@ export const DEFAULT_POLICIES: RolePolicies = {
 	],
 	noteDraftLimit: 10,
 	watermarkAvailable: true,
+	canManageAds: false,
 };
 
 @Injectable()
@@ -440,6 +442,7 @@ export class RoleService implements OnApplicationShutdown, OnModuleInit {
 			}),
 			noteDraftLimit: calc('noteDraftLimit', vs => Math.max(...vs)),
 			watermarkAvailable: calc('watermarkAvailable', vs => vs.some(v => v === true)),
+			canManageAds: calc('canManageAds', vs => vs.some(v => v === true)),
 		};
 	}
 

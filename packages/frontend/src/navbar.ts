@@ -6,7 +6,7 @@
 import { computed, reactive } from 'vue';
 import { ui } from '@@/js/config.js';
 import { clearCache } from './utility/clear-cache.js';
-import { $i, iAmModerator } from '@/i.js';
+import { $i, iAmAdmin } from '@/i.js';
 import { miLocalStorage } from '@/local-storage.js';
 import { openInstanceMenu, openToolsMenu } from '@/ui/_common_/common.js';
 import { lookup } from '@/utility/lookup.js';
@@ -185,12 +185,22 @@ export const navbarItemDef = reactive({
 	},
 });
 
-if ($i?.policies.canManageCustomEmojis || iAmModerator) {
+if (iAmAdmin || $i?.policies.canManageCustomEmojis) {
 	Object.assign(navbarItemDef, {
 		emojisManager: {
 			title: i18n.ts.emojisManager,
 			icon: 'ti ti-mood-edit',
 			to: '/custom-emojis-manager',
+		},
+	});
+}
+
+if (iAmAdmin || $i?.policies.canManageAds) {
+	Object.assign(navbarItemDef, {
+		adsManager: {
+			title: i18n.ts.adsManager,
+			icon: 'ti ti-ad',
+			to: '/ads_manager',
 		},
 	});
 }

@@ -321,6 +321,10 @@ export const packedRolePoliciesSchema = {
 			type: 'boolean',
 			optional: false, nullable: false,
 		},
+		canManageAds: {
+			type: 'boolean',
+			optional: false, nullable: false,
+		},
 	},
 } as const;
 

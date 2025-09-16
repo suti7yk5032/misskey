@@ -1341,6 +1341,7 @@ recall: "この日の"
 recallDays: "遡る日数"
 whatIsNewFork: "フォークの更新情報を見るで"
 moveWidgetsToRightSide: "ウィジェットを右側に移すで"
+adsManager: "広告マネージャー"
 
 _chat:
   noMessagesYet: "まだメッセージはあらへんで"
@@ -1917,6 +1918,7 @@ _role:
     canImportUserLists: "リストのインポートを許す"
     uploadableFileTypes_caption: "MIMEタイプを指定してや。改行で区切って複数指定もできるし、アスタリスク(*)でワイルドカード指定もできるで。(例: image/*)"
     uploadableFileTypes_caption2: "ファイルによっては種別がわからんこともあるで。そないなファイルを許可するんやったら {x} を指定に追加してな。"
+    canManageAds: "広告の管理"
   _condition:
     roleAssignedTo: "マニュアルロールにアサイン済み"
     isLocal: "ローカルユーザー"

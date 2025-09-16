@@ -5549,6 +5549,10 @@ export interface Locale extends ILocale {
      * ウィジェットを右側に表示する
      */
     "moveWidgetsToRightSide": string;
+    /**
+     * 広告マネージャー
+     */
+    "adsManager": string;
     "_order": {
         /**
          * 新しい順
@@ -7899,6 +7903,10 @@ export interface Locale extends ILocale {
              * ウォーターマーク機能の使用可否
              */
             "watermarkAvailable": string;
+            /**
+             * 広告の管理
+             */
+            "canManageAds": string;
         };
         "_condition": {
             /**

@@ -5253,6 +5253,7 @@ export type components = {
             chatAvailability: 'available' | 'readonly' | 'unavailable';
             noteDraftLimit: number;
             watermarkAvailable: boolean;
+						canManageAds: boolean;
         };
         ReversiGameLite: {
             /** Format: id */

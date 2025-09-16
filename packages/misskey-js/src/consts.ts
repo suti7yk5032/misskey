@@ -228,6 +228,7 @@ export const rolePolicies = [
 	'uploadableFileTypes',
 	'noteDraftLimit',
 	'watermarkAvailable',
+	'canManageAds',
 ] as const;
 
 export const queueTypes = [
