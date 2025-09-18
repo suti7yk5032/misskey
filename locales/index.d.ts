@@ -5542,6 +5542,10 @@ export interface Locale extends ILocale {
      */
     "recallDays": string;
     /**
+     * 時刻同期
+     */
+    "recallSyncTime": string;
+    /**
      * フォークの更新情報を見る
      */
     "whatIsNewFork": string;

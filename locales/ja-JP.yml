@@ -1380,6 +1380,7 @@ thankYouForTestingBeta: "ベータ版の検証にご協力いただきありが�
 emojisManager: "絵文字マネージャー"
 recall: "この日の"
 recallDays: "遡る日数"
+recallSyncTime: "時刻同期"
 whatIsNewFork: "フォークの更新情報を見る"
 moveWidgetsToRightSide: "ウィジェットを右側に表示する"
 adsManager: "広告マネージャー"

@@ -6,11 +6,17 @@ SPDX-License-Identifier: AGPL-3.0-only
 <template>
 <div class="_spacer" style="--MI_SPACER-w: 800px;">
 	<div :class="$style.inputForm" style="margin-bottom: var(--MI-margin);">
-		<MkRange v-model="days_ago" style="flex-grow: 1;" :min="0" :max="1095" :step="1" easing :textConverter="(v) => (1095 - v) === 0 ? `今日` : `${1095 - v} 日前`">
-			<template #label>{{ i18n.ts.recallDays }}</template>
+		<MkRange v-model="days_ago" style="flex-grow: 1;" :min="0" :max="days_between" :step="1" easing :textConverter="(v) => (days_between - v) === 0 ? `今日` : `${days_between - v} 日前`">
+			<template #label>{{ i18n.ts.recallDays }} | {{ str_sinceDate }}</template>
 		</MkRange>
 		<MkButton style="margin-left: var(--MI-margin);" @click="loadNotes()">{{ i18n.ts.reload }}</MkButton>
 	</div>
+	<MkFoldableSection style="margin-bottom: var(--MI-margin);" :expanded="true">
+		<template #header>{{ i18n.ts.options }}</template>
+		<MkSwitch v-model="sync_time">
+			<template #label>{{ i18n.ts.recallSyncTime }}</template>
+		</MkSwitch>
+	</MkFoldableSection>
 	<div v-if="paginatorForNotes">
 		<MkNotesTimeline :key="tl_key" :paginator="paginatorForNotes" :withControl="false"/>
 	</div>
@@ -19,12 +25,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <script lang="ts" setup>
 import { markRaw, shallowRef, ref } from 'vue';
+import { lang } from '@@/js/config.js';
 import MkNotesTimeline from '@/components/MkNotesTimeline.vue';
 import { i18n } from '@/i18n.js';
 import { Paginator } from '@/utility/paginator.js';
-import MkInput from '@/components/MkInput.vue';
 import MkButton from '@/components/MkButton.vue';
 import MkRange from '@/components/MkRange.vue';
+import MkFoldableSection from '@/components/MkFoldableSection.vue';
+import MkSwitch from '@/components/MkSwitch.vue';
+import { misskeyApi } from '@/utility/misskey-api.js';
 
 const dateSubtractDays = (src_date: Date, days: number, hours: Array<number>) => {
 	const result = src_date;
@@ -33,18 +42,39 @@ const dateSubtractDays = (src_date: Date, days: number, hours: Array<number>) =>
 	return result;
 };
 
-let days_ago = 1095 - 365;
+let sync_time = ref(false);
 
 const tl_key = ref(0);
 const paginatorForNotes = shallowRef<Paginator<'notes/timeline'> | null>(null);
 
+const first_note = await misskeyApi('notes', {
+	local: true,
+	limit: 1,
+	sinceDate: 1,
+});
+
+const first_note_date = first_note[0] ? new Date(first_note[0].createdAt) : new Date();
+const days_between = (dateSubtractDays(new Date(), 0, [0, 0, 0, 0]).valueOf() - dateSubtractDays(first_note_date, 0, [0, 0, 0, 0]).valueOf()) / 86400000;
+let days_ago = days_between < 365 ? 0 : days_between - 365;
+
+const getSinceDate = () => {
+	const days_ago_fix = days_between - days_ago;
+	return dateSubtractDays(new Date(), days_ago_fix, [0, 0, 0, 0]);
+};
+
+const getStrSinceDate = () => {
+	return getSinceDate().toLocaleDateString(lang, { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+};
+
 const loadNotes = () => {
-	const days_ago_fix = 1095 - days_ago;
+	str_sinceDate = getStrSinceDate();
+	const today = new Date();
+	const untilTime = sync_time.value ? [today.getHours(), today.getMinutes(), today.getSeconds(), 0] : [23, 59, 59, 999];
 	paginatorForNotes.value = markRaw(new Paginator('notes/timeline', {
 		limit: 10,
 		params: {
-			sinceDate: dateSubtractDays(new Date(), days_ago_fix, [0, 0, 0, 0]).valueOf(),
-			untilDate: dateSubtractDays(new Date(), days_ago_fix - 1, [0, 0, 0, 0]).valueOf(),
+			sinceDate: getSinceDate().valueOf(),
+			untilDate: dateSubtractDays(getSinceDate(), 0, untilTime).valueOf(),
 			includeLocalRenotes: false,
 			includeMyRenotes: false,
 			includeRenotedMyNotes: false,
@@ -52,6 +82,8 @@ const loadNotes = () => {
 	}));
 	tl_key.value++;
 };
+
+let str_sinceDate = getStrSinceDate();
 
 loadNotes();
 
