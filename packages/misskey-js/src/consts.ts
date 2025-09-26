@@ -26,6 +26,8 @@ export const notificationTypes = [
 	'quote',
 	'reaction',
 	'pollEnded',
+	'scheduledNotePosted',
+	'scheduledNotePostFailed',
 	'receiveFollowRequest',
 	'followRequestAccepted',
 	'groupInvited',
@@ -227,6 +229,7 @@ export const rolePolicies = [
 	'chatAvailability',
 	'uploadableFileTypes',
 	'noteDraftLimit',
+	'scheduledNoteLimit',
 	'watermarkAvailable',
 	'canManageAds',
 ] as const;
@@ -234,6 +237,7 @@ export const rolePolicies = [
 export const queueTypes = [
 	'system',
 	'endedPollNotification',
+	'postScheduledNote',
 	'deliver',
 	'inbox',
 	'db',
