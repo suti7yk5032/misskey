@@ -1384,6 +1384,7 @@ recallSyncTime: "時刻同期"
 whatIsNewFork: "フォークの更新情報を見る"
 moveWidgetsToRightSide: "ウィジェットを右側に表示する"
 adsManager: "広告マネージャー"
+autoShowReplies: "自動で返信を見る"
 
 _order:
   newest: "新しい順"

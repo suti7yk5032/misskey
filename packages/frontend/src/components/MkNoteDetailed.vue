@@ -585,6 +585,7 @@ function blur() {
 }
 
 const repliesLoaded = ref(false);
+const autoShowReplies = ref(prefer.s.autoShowReplies);
 
 function loadReplies() {
 	repliesLoaded.value = true;
@@ -607,6 +608,11 @@ function loadConversation() {
 		conversation.value = res.reverse();
 	});
 }
+
+if (autoShowReplies.value) {
+	loadReplies();
+}
+
 </script>
 
 <style lang="scss" module>

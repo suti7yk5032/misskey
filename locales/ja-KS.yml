@@ -1343,6 +1343,7 @@ recallSyncTime: "おんなじ時刻"
 whatIsNewFork: "フォークの更新情報を見るで"
 moveWidgetsToRightSide: "ウィジェットを右側に移すで"
 adsManager: "広告マネージャー"
+autoShowReplies: "自動で返信を見る"
 
 _chat:
   noMessagesYet: "まだメッセージはあらへんで"

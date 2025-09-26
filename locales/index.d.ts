@@ -5557,6 +5557,10 @@ export interface Locale extends ILocale {
      * 広告マネージャー
      */
     "adsManager": string;
+    /**
+     * 自動で返信を見る
+     */
+    "autoShowReplies": string;
     "_order": {
         /**
          * 新しい順

@@ -1384,6 +1384,7 @@ recallSyncTime: "Sync time"
 whatIsNewFork: "Show changes in fork"
 moveWidgetsToRightSide: "Move widgets to the right side"
 adsManager: "Ad Manager"
+autoShowReplies: "Automatically load replies"
 
 _order:
   newest: "Newest First"

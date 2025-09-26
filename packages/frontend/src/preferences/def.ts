@@ -508,4 +508,7 @@ export const PREF_DEF = definePreferences({
 	'moveWidgetsToRightSide': {
 		default: false,
 	},
+	'autoShowReplies': {
+		default: true,
+	},
 });

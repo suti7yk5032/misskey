@@ -117,6 +117,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 									</MkSwitch>
 								</MkPreferenceContainer>
 							</SearchMarker>
+
+							<SearchMarker :keywords="['auto', 'load', 'reply', 'replies']">
+								<MkPreferenceContainer k="autoShowReplies">
+									<MkSwitch v-model="autoShowReplies">
+										<template #label><SearchLabel>{{ i18n.ts.autoShowReplies }}</SearchLabel></template>
+									</MkSwitch>
+								</MkPreferenceContainer>
+							</SearchMarker>
 						</div>
 
 						<SearchMarker :keywords="['emoji', 'style', 'native', 'system', 'fluent', 'twemoji']">
@@ -888,6 +896,7 @@ const contextMenu = prefer.model('contextMenu');
 const menuStyle = prefer.model('menuStyle');
 const makeEveryTextElementsSelectable = prefer.model('makeEveryTextElementsSelectable');
 const moveWidgetsToRightSide = prefer.model('moveWidgetsToRightSide');
+const autoShowReplies = prefer.model('autoShowReplies');
 
 const fontSize = ref(miLocalStorage.getItem('fontSize'));
 const useSystemFont = ref(miLocalStorage.getItem('useSystemFont') != null);

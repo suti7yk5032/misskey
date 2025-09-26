@@ -466,6 +466,10 @@ export const store = markRaw(new Pizzax('base', {
 		where: 'device',
 		default: false,
 	},
+	autoShowReplies: {
+		where: 'device',
+		default: true,
+	},
 	//#endregion
 }));
 

@@ -137,6 +137,7 @@ export function migrateOldSettings() {
 		prefer.commit('defaultNoteVisibility', store.s.defaultNoteVisibility);
 		prefer.commit('defaultNoteLocalOnly', store.s.defaultNoteLocalOnly);
 		prefer.commit('moveWidgetsToRightSide', store.s.moveWidgetsToRightSide);
+		prefer.commit('autoShowReplies', store.s.autoShowReplies);
 
 		window.setTimeout(() => {
 			unisonReload();
