@@ -611,6 +611,9 @@ function loadConversation() {
 
 if (autoShowReplies.value) {
 	loadReplies();
+	if (conversationLoaded.value === false && appearNote.reply && appearNote.reply.replyId) {
+		loadConversation();
+	}
 }
 
 </script>
