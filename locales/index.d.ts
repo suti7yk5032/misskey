@@ -5659,6 +5659,10 @@ export interface Locale extends ILocale {
      * 自動で返信を見る
      */
     "autoShowReplies": string;
+    /**
+     * ノートを展開する
+     */
+    "expandNote": string;
     "_order": {
         /**
          * 新しい順

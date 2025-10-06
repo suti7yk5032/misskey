@@ -1345,6 +1345,7 @@ whatIsNewFork: "フォークの更新情報を見るで"
 moveWidgetsToRightSide: "ウィジェットを右側に移すで"
 adsManager: "広告マネージャー"
 autoShowReplies: "自動で返信を見る"
+expandNote: "ノート展開しとく"
 
 _chat:
   noMessagesYet: "まだメッセージはあらへんで"

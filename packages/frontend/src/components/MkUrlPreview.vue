@@ -43,6 +43,23 @@ SPDX-License-Identifier: AGPL-3.0-only
 		</MkButton>
 	</div>
 </template>
+<template v-else-if="noteId && noteExpanded">
+  <div ref="misskey">
+		<iframe
+			:src="`https://misskey.local/embed/notes/${noteId}`"
+			:data-misskey-embed-id="`v1_${embedRandomString()}`"
+			loading="lazy"
+			referrerpolicy="strict-origin-when-cross-origin"
+			style="border: none; width: 100%; max-width: 500px; height: 300px; color-scheme: light dark;"
+		></iframe>
+		<script defer src="https://misskey.local/embed.js"></script>
+	</div>
+	<div :class="$style.action">
+		<MkButton :small="true" inline @click="noteExpanded = false">
+			<i class="ti ti-x"></i> {{ i18n.ts.close }}
+		</MkButton>
+	</div>
+</template>
 <div v-else>
 	<component :is="self ? 'MkA' : 'a'" :class="[$style.link, { [$style.compact]: compact }]" :[attr]="maybeRelativeUrl" rel="nofollow noopener" :target="target" :title="url">
 		<div v-if="thumbnail && !sensitive" :class="$style.thumbnail" :style="prefer.s.dataSaver.urlPreviewThumbnail ? '' : { backgroundImage: `url('${thumbnail}')` }">
@@ -76,6 +93,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 			</MkButton>
 			<MkButton v-if="!isMobile" :small="true" inline @click="openPlayer()">
 				<i class="ti ti-picture-in-picture"></i> {{ i18n.ts.openInWindow }}
+			</MkButton>
+		</div>
+		<div v-if="noteId" :class="$style.action">
+			<MkButton :small="true" inline @click="noteExpanded = true">
+				<i class="ti ti-arrows-move-vertical"></i> {{ i18n.ts.expandNote }}
 			</MkButton>
 		</div>
 	</template>
@@ -130,7 +152,9 @@ const player = ref({
 } as SummalyResult['player']);
 const playerEnabled = ref(false);
 const tweetId = ref<string | null>(null);
+const noteId = ref<string | null>(null);
 const tweetExpanded = ref(props.detail);
+const noteExpanded = ref(props.detail);
 const embedId = `embed${Math.random().toString().replace(/\D/, '')}`;
 const tweetHeight = ref(150);
 const unknownUrl = ref(false);
@@ -149,6 +173,11 @@ if (requestUrl.hostname === 'twitter.com' || requestUrl.hostname === 'mobile.twi
 
 if (requestUrl.hostname === 'music.youtube.com' && requestUrl.pathname.match('^/(?:watch|channel)')) {
 	requestUrl.hostname = 'www.youtube.com';
+}
+
+if (requestUrl.hostname === 'misskey.local' && requestUrl.pathname.match(/^\/notes\/[a-z0-9]+/)) {
+	const m = requestUrl.pathname.match(/^\/notes\/([a-z0-9]+)/);
+	if (m) noteId.value = m[1];
 }
 
 requestUrl.hash = '';
@@ -201,6 +230,10 @@ function openPlayer(): void {
 		},
 	});
 }
+
+const embedRandomString = (): string => {
+	return Math.random().toString(36).substring(2, 10);
+};
 
 window.addEventListener('message', adjustTweetHeight);
 
