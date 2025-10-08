@@ -1346,6 +1346,7 @@ moveWidgetsToRightSide: "ウィジェットを右側に移すで"
 adsManager: "広告マネージャー"
 autoShowReplies: "自動で返信を見る"
 
+widgets: "ウィジェット"
 _chat:
   noMessagesYet: "まだメッセージはあらへんで"
   individualChat_description: "特定のユーザーと一対一でチャットができるで。"
