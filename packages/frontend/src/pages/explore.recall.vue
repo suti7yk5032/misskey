@@ -5,12 +5,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <template>
 <div class="_spacer" style="--MI_SPACER-w: 800px;">
-	<div :class="$style.inputForm" style="margin-bottom: var(--MI-margin);">
-		<MkRange v-model="days_ago" style="flex-grow: 1;" :min="0" :max="days_between" :step="1" easing :textConverter="(v) => (days_between - v) === 0 ? `今日` : `${days_between - v} 日前`">
-			<template #label>{{ i18n.ts.recallDays }} | {{ str_sinceDate }}</template>
-		</MkRange>
-		<button style="margin-left: var(--MI-margin);" :disabled="days_ago <= 0" @click="decrementDay"><i class="ti ti-caret-left"></i></button>
-		<button style="margin-left: var(--MI-margin);" :disabled="days_ago >= days_between" @click="incrementDay"><i class="ti ti-caret-right"></i></button>
+	<div style="margin-bottom: var(--MI-margin);">
+		<p :class="$style.rangeLabel">{{ i18n.ts.recallDays }} | {{ str_sinceDate }}</p>
+		<div :class="$style.inputForm">
+			<button :class="$style.rangeButton" :disabled="days_ago <= 0" @click="decrementDay"><i class="ti ti-caret-left"></i></button>
+			<MkRange v-model="days_ago" style="flex-grow: 1; margin-left: var(--MI-margin);" :min="0" :max="days_between" :step="1" easing :textConverter="(v) => (days_between - v) === 0 ? `今日` : `${days_between - v} 日前`"></MkRange>
+			<button :class="$style.rangeButton" style="margin-left: var(--MI-margin);" :disabled="days_ago >= days_between" @click="incrementDay"><i class="ti ti-caret-right"></i></button>
+		</div>
 	</div>
 	<MkFoldableSection style="margin-bottom: var(--MI-margin);" :expanded="true">
 		<template #header>{{ i18n.ts.options }}</template>
@@ -30,7 +31,6 @@ import { lang } from '@@/js/config.js';
 import MkNotesTimeline from '@/components/MkNotesTimeline.vue';
 import { i18n } from '@/i18n.js';
 import { Paginator } from '@/utility/paginator.js';
-import MkButton from '@/components/MkButton.vue';
 import MkRange from '@/components/MkRange.vue';
 import MkFoldableSection from '@/components/MkFoldableSection.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
@@ -106,8 +106,19 @@ watch(sync_time, () => {
 </script>
 
 <style lang="scss" module>
-fw.inputForm {
-	display: flex;
-	justify-content: flex-start;
+.inputForm {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.rangeLabel {
+	font-size: 0.8em;
+	margin-bottom: 0.5em;
+	margin-top: 0;
+}
+
+.rangeButton {
+	background: none;
+	border: none;
 }
 </style>
