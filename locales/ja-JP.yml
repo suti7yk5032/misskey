@@ -1408,7 +1408,7 @@ _compression:
     small: "サイズ小"
 emojisManager: "絵文字マネージャー"
 recall: "この日の"
-recallDays: "遡る日数"
+recallDays: "日付"
 recallSyncTime: "時刻同期"
 whatIsNewFork: "フォークの更新情報を見る"
 moveWidgetsToRightSide: "ウィジェットを右側に表示する"

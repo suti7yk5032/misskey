@@ -9,11 +9,12 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<MkRange v-model="days_ago" style="flex-grow: 1;" :min="0" :max="days_between" :step="1" easing :textConverter="(v) => (days_between - v) === 0 ? `今日` : `${days_between - v} 日前`">
 			<template #label>{{ i18n.ts.recallDays }} | {{ str_sinceDate }}</template>
 		</MkRange>
-		<MkButton style="margin-left: var(--MI-margin);" @click="loadNotes()">{{ i18n.ts.reload }}</MkButton>
+		<button style="margin-left: var(--MI-margin);" :disabled="days_ago <= 0" @click="decrementDay"><i class="ti ti-caret-left"></i></button>
+		<button style="margin-left: var(--MI-margin);" :disabled="days_ago >= days_between" @click="incrementDay"><i class="ti ti-caret-right"></i></button>
 	</div>
 	<MkFoldableSection style="margin-bottom: var(--MI-margin);" :expanded="true">
 		<template #header>{{ i18n.ts.options }}</template>
-		<MkSwitch v-model="sync_time">
+		<MkSwitch v-model="sync_time" click="">
 			<template #label>{{ i18n.ts.recallSyncTime }}</template>
 		</MkSwitch>
 	</MkFoldableSection>
@@ -24,7 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { markRaw, shallowRef, ref } from 'vue';
+import { markRaw, shallowRef, ref, watch } from 'vue';
 import { lang } from '@@/js/config.js';
 import MkNotesTimeline from '@/components/MkNotesTimeline.vue';
 import { i18n } from '@/i18n.js';
@@ -55,10 +56,10 @@ const first_note = await misskeyApi('notes', {
 
 const first_note_date = first_note[0] ? new Date(first_note[0].createdAt) : new Date();
 const days_between = (dateSubtractDays(new Date(), 0, [0, 0, 0, 0]).valueOf() - dateSubtractDays(first_note_date, 0, [0, 0, 0, 0]).valueOf()) / 86400000;
-let days_ago = days_between < 365 ? 0 : days_between - 365;
+let days_ago = ref(days_between < 365 ? 0 : days_between - 365);
 
 const getSinceDate = () => {
-	const days_ago_fix = days_between - days_ago;
+	const days_ago_fix = days_between - days_ago.value;
 	return dateSubtractDays(new Date(), days_ago_fix, [0, 0, 0, 0]);
 };
 
@@ -83,14 +84,29 @@ const loadNotes = () => {
 	tl_key.value++;
 };
 
+const decrementDay = () => {
+	if (days_ago.value > 0) days_ago.value--;
+};
+const incrementDay = () => {
+	if (days_ago.value < days_between) days_ago.value++;
+};
+
 let str_sinceDate = getStrSinceDate();
 
 loadNotes();
 
+watch(days_ago, () => {
+	loadNotes();
+});
+
+watch(sync_time, () => {
+	loadNotes();
+});
+
 </script>
 
-<style land="scss" module>
-.inputForm {
+<style lang="scss" module>
+fw.inputForm {
 	display: flex;
 	justify-content: flex-start;
 }

@@ -1389,7 +1389,7 @@ themeIsDefaultBecauseSafeMode: "While safe mode is active, the default theme is 
 thankYouForTestingBeta: "Thank you for helping us test the beta version!"
 emojisManager: "Emoji Manager"
 recall: "Recall"
-recallDays: "Days ago"
+recallDays: "Date"
 recallSyncTime: "Sync time"
 whatIsNewFork: "Show changes in fork"
 moveWidgetsToRightSide: "Move widgets to the right side"

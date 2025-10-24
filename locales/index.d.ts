@@ -5644,7 +5644,7 @@ export interface Locale extends ILocale {
      */
     "recall": string;
     /**
-     * 遡る日数
+     * 日付
      */
     "recallDays": string;
     /**
