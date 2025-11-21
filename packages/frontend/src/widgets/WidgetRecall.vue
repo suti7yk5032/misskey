@@ -24,6 +24,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import { ref, shallowRef, markRaw, computed, watch, onMounted } from 'vue';
 import * as Misskey from 'misskey-js';
+import { lang } from '@@/js/config.js';
 import { useWidgetPropsManager } from './widget.js';
 import type { WidgetComponentEmits, WidgetComponentExpose, WidgetComponentProps } from './widget.js';
 import type { FormWithDefault, GetFormResultType } from '@/utility/form.js';
@@ -41,11 +42,15 @@ const widgetPropsDef = {
 	},
 	height: {
 		type: 'number',
-		default: 300,
+		default: 500,
 	},
 	limit: {
 		type: 'number',
-		default: 10,
+		default: 50,
+	},
+	listId: {
+		type: 'string',
+		default: '',
 	},
 	syncTime: {
 		type: 'boolean',
@@ -65,7 +70,7 @@ const emit = defineEmits<WidgetComponentEmits<WidgetProps>>();
 const { widgetProps, configure, save } = useWidgetPropsManager(name, widgetPropsDef, props, emit);
 const widgetId = computed(() => props.widget ? props.widget.id : null);
 
-const paginatorForNotes = shallowRef<Paginator<'notes/timeline'> | null>(null);
+const paginatorForNotes = shallowRef<Paginator<'notes/timeline' | 'notes/user-list-timeline'> | null>(null);
 const tlKey = ref('');
 const selectedDate = ref<Date | null>(null);
 const firstNoteDate = ref<Date | null>(null);
@@ -105,17 +110,28 @@ const load = () => {
 	const untilDate = widgetProps.syncTime
 		? new Date(selectedDate.value.getFullYear(), selectedDate.value.getMonth(), selectedDate.value.getDate(), now.getHours(), now.getMinutes(), now.getSeconds(), 0).valueOf()
 		: new Date(selectedDate.value.getFullYear(), selectedDate.value.getMonth(), selectedDate.value.getDate(), 23, 59, 59, 999).valueOf();
-	paginatorForNotes.value = markRaw(new Paginator('notes/timeline', {
+	const endpoint: 'notes/timeline' | 'notes/user-list-timeline' = widgetProps.listId ? 'notes/user-list-timeline' : 'notes/timeline';
+	type TimelineParams = {
+		sinceDate: number;
+		untilDate: number;
+		includeLocalRenotes: boolean;
+		includeMyRenotes: boolean;
+		includeRenotedMyNotes: boolean;
+		listId?: string;
+	};
+	const params: TimelineParams = {
+		sinceDate,
+		untilDate,
+		includeLocalRenotes: false,
+		includeMyRenotes: false,
+		includeRenotedMyNotes: false,
+	};
+	if (endpoint === 'notes/user-list-timeline') params.listId = widgetProps.listId;
+	paginatorForNotes.value = markRaw(new Paginator(endpoint, {
 		limit: widgetProps.limit,
-		params: {
-			sinceDate,
-			untilDate,
-			includeLocalRenotes: false,
-			includeMyRenotes: false,
-			includeRenotedMyNotes: false,
-		},
+		params,
 	}));
-	tlKey.value = `${sinceDate}-${untilDate}`;
+	tlKey.value = `${endpoint}-${sinceDate}-${untilDate}`;
 };
 
 onMounted(async () => {
@@ -134,10 +150,11 @@ onMounted(async () => {
 watch(() => widgetProps.limit, () => load());
 watch(() => widgetProps.syncTime, () => load());
 watch(() => widgetProps.fixedOneYear, () => load());
+watch(() => widgetProps.listId, () => load());
 
 const headerTitle = computed(() => {
 	if (!selectedDate.value) return i18n.ts.recall;
-	const dateStr = selectedDate.value.toLocaleDateString(undefined, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
+	const dateStr = selectedDate.value.toLocaleDateString(lang, { weekday: 'short', year: 'numeric', month: 'short', day: 'numeric' });
 	return widgetProps.fixedOneYear
 		? `${i18n.ts.recall} • 1y / ${dateStr}`
 		: `${i18n.ts.recall} / ${dateStr}`;
