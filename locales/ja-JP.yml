@@ -2606,6 +2606,7 @@ _widgets:
   clicker: "クリッカー"
   birthdayFollowings: "今日誕生日のユーザー"
   chat: "ダイレクトメッセージ"
+  recall: "この日の"
 
 _cw:
   hide: "隠す"

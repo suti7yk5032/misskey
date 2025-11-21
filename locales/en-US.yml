@@ -2548,6 +2548,7 @@ _widgets:
   clicker: "Clicker"
   birthdayFollowings: "Today's Birthdays"
   chat: "Chat with user"
+  recall: "Recall"
 _cw:
   hide: "Hide"
   show: "Show content"

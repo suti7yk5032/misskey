@@ -9914,6 +9914,10 @@ export interface Locale extends ILocale {
          * ダイレクトメッセージ
          */
         "chat": string;
+        /**
+         * この日の
+         */
+        "recall": string;
     };
     "_cw": {
         /**
