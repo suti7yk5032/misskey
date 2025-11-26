@@ -1,6 +1,6 @@
 {
 	"name": "misskey",
-	"version": "2025.11.0-suti7.2",
+	"version": "2025.11.1-beta.0-suti7.0",
 	"codename": "nasubi",
 	"repository": {
 		"type": "git",
