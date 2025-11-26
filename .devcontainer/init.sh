@@ -2,9 +2,6 @@
 
 set -xe
 
-sudo apt-get update
-sudo apt-get -y install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-
 if grep -q "^\s*0\s*0.*" /proc/self/uid_map; then
 	sudo chown node node_modules
 else
