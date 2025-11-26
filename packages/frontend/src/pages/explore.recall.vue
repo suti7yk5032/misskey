@@ -11,6 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<button :class="$style.rangeButton" :disabled="days_ago <= 0" @click="decrementDay"><i class="ti ti-caret-left"></i></button>
 			<MkRange v-model="days_ago" style="flex-grow: 1; margin-left: var(--MI-margin);" :min="0" :max="days_between" :step="1" easing :textConverter="(v) => (days_between - v) === 0 ? `今日` : `${days_between - v} 日前`"></MkRange>
 			<button :class="$style.rangeButton" style="margin-left: var(--MI-margin);" :disabled="days_ago >= days_between" @click="incrementDay"><i class="ti ti-caret-right"></i></button>
+			<button :class="$style.rangeButton" style="margin-left: var(--MI-margin);" @click="shuffleDay"><i class="ti ti-arrows-shuffle"></i></button>
 		</div>
 	</div>
 	<MkFoldableSection style="margin-bottom: var(--MI-margin);" :expanded="true">
@@ -44,9 +45,10 @@ const dateSubtractDays = (src_date: Date, days: number, hours: Array<number>) =>
 };
 
 let sync_time = ref(false);
+let listId = ref('');
 
 const tl_key = ref(0);
-const paginatorForNotes = shallowRef<Paginator<'notes/timeline'> | null>(null);
+const paginatorForNotes = shallowRef<Paginator<'notes/timeline' | 'notes/user-list-timeline'> | null>(null);
 
 const first_note = await misskeyApi('notes', {
 	local: true,
@@ -82,6 +84,10 @@ const loadNotes = () => {
 		},
 	}));
 	tl_key.value++;
+};
+
+const shuffleDay = () => {
+	days_ago.value = Math.floor(Math.random() * (days_between + 1));
 };
 
 const decrementDay = () => {
