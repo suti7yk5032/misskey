@@ -1399,6 +1399,7 @@ whatIsNewFork: "Show changes in fork"
 moveWidgetsToRightSide: "Move widgets to the right side"
 adsManager: "Ad Manager"
 autoShowReplies: "Automatically load replies"
+startupWindowSize: "Initial window size"
 
 createUserSpecifiedNote: "Create a direct note"
 schedulePost: "Schedule note"

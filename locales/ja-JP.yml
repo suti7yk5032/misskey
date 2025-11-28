@@ -1458,6 +1458,7 @@ _compression:
     large: "サイズ大"
     medium: "サイズ中"
     small: "サイズ小"
+
 emojisManager: "絵文字マネージャー"
 recall: "この日の"
 recallDays: "日付"
@@ -1466,6 +1467,7 @@ whatIsNewFork: "フォークの更新情報を見る"
 moveWidgetsToRightSide: "ウィジェットを右側に表示する"
 adsManager: "広告マネージャー"
 autoShowReplies: "自動で返信を見る"
+startupWindowSize: "ウィンドウの初期サイズ"
 
 _order:
   newest: "新しい順"

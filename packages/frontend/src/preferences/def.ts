@@ -547,4 +547,10 @@ export const PREF_DEF = definePreferences({
 	'experimental.enableWebTranslatorApi': {
 		default: false,
 	},
+	'startupWindowWidth': {
+		default: 500,
+	},
+	'startupWindowHeight': {
+		default: 500,
+	},
 });

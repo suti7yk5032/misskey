@@ -5861,6 +5861,10 @@ export interface Locale extends ILocale {
      * 自動で返信を見る
      */
     "autoShowReplies": string;
+    /**
+     * ウィンドウの初期サイズ
+     */
+    "startupWindowSize": string;
     "_order": {
         /**
          * 新しい順

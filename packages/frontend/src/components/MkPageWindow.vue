@@ -6,8 +6,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 <template>
 <MkWindow
 	ref="windowEl"
-	:initialWidth="500"
-	:initialHeight="500"
+	:initialWidth="prefer.r['startupWindowWidth'].value"
+	:initialHeight="prefer.r['startupWindowHeight'].value"
 	:canResize="true"
 	:closeButton="true"
 	:buttonsLeft="buttonsLeft"

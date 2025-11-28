@@ -825,6 +825,26 @@ SPDX-License-Identifier: AGPL-3.0-only
 								</div>
 							</MkFolder>
 						</SearchMarker>
+
+						<SearchMarker :keywords="['window', 'size']">
+							<MkFolder>
+								<template #label><SearchLabel>{{ i18n.ts.startupWindowSize }}</SearchLabel></template>
+
+								<div class="_gaps_m">
+									<MkPreferenceContainer k="startupWindowWidth">
+										<MkRange v-model="startupWindowWidth" :min="200" :max="1920" :step="10" easing>
+											<template #label><SearchLabel>{{ i18n.ts.width }}</SearchLabel></template>
+										</MkRange>
+									</MkPreferenceContainer>
+
+									<MkPreferenceContainer k="startupWindowHeight">
+										<MkRange v-model="startupWindowHeight" :min="200" :max="1080" :step="10" easing>
+											<template #label><SearchLabel>{{ i18n.ts.height }}</SearchLabel></template>
+										</MkRange>
+									</MkPreferenceContainer>
+								</div>
+							</MkFolder>
+						</SearchMarker>
 					</div>
 				</MkFolder>
 			</SearchMarker>
@@ -897,6 +917,8 @@ const showFixedPostForm = prefer.model('showFixedPostForm');
 const showFixedPostFormInChannel = prefer.model('showFixedPostFormInChannel');
 const numberOfPageCache = prefer.model('numberOfPageCache');
 const enableInfiniteScroll = prefer.model('enableInfiniteScroll');
+const startupWindowWidth = prefer.model('startupWindowWidth');
+const startupWindowHeight = prefer.model('startupWindowHeight');
 const useReactionPickerForContextMenu = prefer.model('useReactionPickerForContextMenu');
 const showAvailableReactionsFirstInNote = prefer.model('showAvailableReactionsFirstInNote');
 const useGroupedNotifications = prefer.model('useGroupedNotifications');
