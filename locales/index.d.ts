@@ -10693,6 +10693,14 @@ export interface Locale extends ILocale {
          */
         "youRenoted": ParameterizedString<"name">;
         /**
+         * {name}からのメッセージ
+         */
+        "youGotDM": ParameterizedString<"name">;
+        /**
+         * {name} | {groupName}でのメッセージ
+         */
+        "youGotGroupDM": ParameterizedString<"name" | "groupName">;
+        /**
          * フォローされました
          */
         "youWereFollowed": string;
@@ -10792,6 +10800,10 @@ export interface Locale extends ILocale {
          * 心当たりがない場合は「{text}」を通じてアクセストークンを削除してください。
          */
         "createTokenDescription": ParameterizedString<"text">;
+        /**
+         * 添付ファイルあり
+         */
+        "includeFiles": string;
         "_types": {
             /**
              * すべて

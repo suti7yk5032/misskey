@@ -2751,6 +2751,8 @@ _notification:
   youGotReply: "{name} replied to you"
   youGotQuote: "{name} quoted you"
   youRenoted: "Renote from {name}"
+  youGotDM: "Message from {name}"
+  youGotGroupDM: "{name} | Message in {groupName}"
   youWereFollowed: "followed you"
   youReceivedFollowRequest: "You've received a follow request"
   yourFollowRequestAccepted: "Your follow request was accepted"
@@ -2776,6 +2778,7 @@ _notification:
   login: "Someone logged in"
   createToken: "An access token has been created"
   createTokenDescription: "If you have no idea, delete the access token through \"{text}\"."
+  includeFiles: "With attachment"
   _types:
     all: "All"
     note: "New notes"
