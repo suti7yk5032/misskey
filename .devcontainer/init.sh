@@ -2,7 +2,7 @@
 
 set -xe
 
-if grep -q "^\s*0\s*0.*" /proc/self/uid_map; then
+if [ grep -q "^\s*0\s*0.*" /proc/self/uid_map ]; then
 	sudo chown node node_modules
 else
 	printf "Rootless mode detected.\n"
@@ -14,7 +14,11 @@ git config --global --add safe.directory /workspace
 git submodule update --init
 pnpm config set store-dir /home/node/.local/share/pnpm/store
 pnpm install --frozen-lockfile
-cp .devcontainer/devcontainer.yml .config/default.yml
+if [ -f ".devcontainer/devcontainer_custom.yml" ]; then
+	cp .devcontainer/devcontainer_custom.yml .config/default.yml
+else
+	cp .devcontainer/devcontainer.yml .config/default.yml
+fi
 pnpm build
 pnpm migrate
 pnpm exec cypress install
