@@ -2,7 +2,7 @@
 
 set -xe
 
-if [ grep -q "^\s*0\s*0.*" /proc/self/uid_map ]; then
+if grep -q "^\s*0\s*0.*" /proc/self/uid_map; then
 	sudo chown node node_modules
 else
 	printf "Rootless mode detected.\n"
