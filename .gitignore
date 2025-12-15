@@ -83,3 +83,7 @@ vite.config.local-dev.ts.timestamp-*
 
 # Container image
 images/
+
+# Custom
+/.devcontainer/devcontainer_custom.yml
+/.devcontainer/scripts/
