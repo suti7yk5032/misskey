@@ -44,7 +44,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 		<SearchMarker :keywords="['navbar', 'sidebar', 'toggle', 'button', 'sub']">
 			<MkPreferenceContainer k="showNavbarSubButtons">
-				<MkSwitch v-model="prefer.s.showNavbarSubButtons">
+				<MkSwitch v-model="showNavbarSubButtons">
 					<template #label><SearchLabel>{{ i18n.ts._settings.showNavbarSubButtons }}</SearchLabel></template>
 				</MkSwitch>
 			</MkPreferenceContainer>
