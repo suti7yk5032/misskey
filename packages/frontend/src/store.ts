@@ -471,6 +471,22 @@ export const store = markRaw(new Pizzax('base', {
 		where: 'device',
 		default: true,
 	},
+	startupWindowWidth: {
+		where: 'device',
+		default: 800,
+	},
+	startupWindowHeight: {
+		where: 'device',
+		default: 500,
+	},
+	moveBackButtonToRightSideOfTitlebar: {
+		where: 'device',
+		default: false,
+	},
+	showBackButtonInNavbar: {
+		where: 'device',
+		default: false,
+	},
 	//#endregion
 }));
 

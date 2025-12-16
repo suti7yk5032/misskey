@@ -147,6 +147,10 @@ export function migrateOldSettings() {
 		prefer.commit('defaultNoteLocalOnly', store.s.defaultNoteLocalOnly);
 		prefer.commit('moveWidgetsToRightSide', store.s.moveWidgetsToRightSide);
 		prefer.commit('autoShowReplies', store.s.autoShowReplies);
+		prefer.commit('startupWindowWidth', store.s.startupWindowWidth);
+		prefer.commit('startupWindowHeight', store.s.startupWindowHeight);
+		prefer.commit('moveBackButtonToRightSideOfTitlebar', store.s.moveBackButtonToRightSideOfTitlebar);
+		prefer.commit('showBackButtonInNavbar', store.s.showBackButtonInNavbar);
 
 		window.setTimeout(() => {
 			unisonReload();

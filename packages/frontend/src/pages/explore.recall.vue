@@ -14,11 +14,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<button :class="$style.rangeButton" style="margin-left: var(--MI-margin);" @click="shuffleDay"><i class="ti ti-arrows-shuffle"></i></button>
 		</div>
 	</div>
-	<MkFoldableSection style="margin-bottom: var(--MI-margin);" :expanded="true">
+	<MkFoldableSection style="margin-bottom: var(--MI-margin);" :expanded="false">
 		<template #header>{{ i18n.ts.options }}</template>
 		<MkSwitch v-model="syncTime" click="">
 			<template #label>{{ i18n.ts.recallSyncTime }}</template>
 		</MkSwitch>
+		<MkSelect v-model="listId" style="margin-top: var(--MI-margin);" :class="$style.selectInput" :items="userLists">
+			<template #label>{{ i18n.ts.lists }}</template>
+		</MkSelect>
 	</MkFoldableSection>
 	<div v-if="paginatorForNotes">
 		<MkNotesTimeline :key="tlKey" :paginator="paginatorForNotes" :withControl="false"/>
@@ -27,15 +30,17 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { markRaw, shallowRef, ref, watch } from 'vue';
+import { markRaw, shallowRef, ref, watch, onMounted } from 'vue';
 import { lang } from '@@/js/config.js';
 import MkNotesTimeline from '@/components/MkNotesTimeline.vue';
 import { i18n } from '@/i18n.js';
 import { Paginator } from '@/utility/paginator.js';
 import MkRange from '@/components/MkRange.vue';
 import MkFoldableSection from '@/components/MkFoldableSection.vue';
+import MkSelect from '@/components/MkSelect.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
 import { misskeyApi } from '@/utility/misskey-api.js';
+import * as os from '@/os.js';
 
 const convertMsToDays = (ms: number) => {
 	return Math.floor(ms / 86400000);
@@ -44,11 +49,13 @@ const convertMsToDays = (ms: number) => {
 const firstNote = await misskeyApi('notes', { local: true, limit: 1, sinceDate: 1 });
 const tlKey = ref(0);
 const syncTime = ref(false);
-const paginatorForNotes = shallowRef<Paginator<'notes/timeline'> | null>(null);
+const listId = ref<string>('');
+const paginatorForNotes = shallowRef<Paginator<'notes/timeline' | 'notes/user-list-timeline'> | null>(null);
 const daysOffset = ref(0);
 const today = new Date();
 const daysMax = ref(firstNote[0] ? convertMsToDays(today.valueOf() - new Date(firstNote[0].createdAt).valueOf()) : 0);
 const strSinceDate = ref('');
+const userLists = ref<Array<{ label: string; value: string }>>([{ label: i18n.ts.none, value: '' }]);
 
 const dateSubtractDays = (date: Date, days: number, time: Array<number> | null = null) => {
 	const d = new Date(date);
@@ -59,7 +66,7 @@ const dateSubtractDays = (date: Date, days: number, time: Array<number> | null =
 };
 
 const pickRandomOffsetDays = () => {
-	return Math.floor(Math.random() * (daysMax.value + 1));
+	return Math.floor(Math.random() * daysMax.value);
 };
 
 const shuffleDay = () => {
@@ -89,20 +96,52 @@ const getStrSinceDate = (daysAgo?: number) => {
 const load = () => {
 	const daysAgo = daysMax.value - daysOffset.value;
 	strSinceDate.value = getStrSinceDate(daysAgo);
-	const targetDate = dateSubtractDays(today, daysAgo);
 	const sinceDate = dateSubtractDays(today, daysAgo, [0, 0, 0, 0]).valueOf();
 	const untilDate = syncTime.value ? dateSubtractDays(today, daysAgo, [today.getHours(), today.getMinutes(), today.getSeconds(), 999]).valueOf() : dateSubtractDays(today, daysAgo, [23, 59, 59, 999]).valueOf();
-	paginatorForNotes.value = markRaw(new Paginator('notes/timeline', {
+	const endpoint: 'notes/timeline' | 'notes/user-list-timeline' = listId.value ? 'notes/user-list-timeline' : 'notes/timeline';
+	type TimelineParams = {
+		sinceDate: number;
+		untilDate: number;
+		includeLocalRenotes: boolean;
+		includeMyRenotes: boolean;
+		includeRenotedMyNotes: boolean;
+		listId?: string;
+	};
+	const params: TimelineParams = {
+		sinceDate: sinceDate,
+		untilDate: untilDate,
+		includeLocalRenotes: false,
+		includeMyRenotes: false,
+		includeRenotedMyNotes: false,
+	};
+	if (endpoint === 'notes/user-list-timeline') params.listId = listId.value;
+	paginatorForNotes.value = markRaw(new Paginator(endpoint, {
 		limit: 10,
-		params: {
-			sinceDate: sinceDate,
-			untilDate: untilDate,
-			includeLocalRenotes: false,
-			includeMyRenotes: false,
-			includeRenotedMyNotes: false,
-		},
+		params,
 	}));
 	tlKey.value++;
+};
+
+const inputCustomUserListID = () => {
+	os.inputText({
+		title: i18n.ts.inputCustomUserListID,
+		default: '',
+	}).then(({ canceled, result: customListId }) => {
+		if (canceled) return;
+		listId.value = customListId;
+	});
+};
+
+const fetchUserLists = async () => {
+	try {
+		const lists = await misskeyApi('users/lists/list');
+		lists.forEach(element => {
+			userLists.value.push({ label: element.name, value: element.id });
+		});
+	} catch (err) {
+		console.error('Failed to fetch user lists:', err);
+	}
+	userLists.value.push({ label: i18n.ts.inputCustomUserListID, value: 'inputCustomUserListID' });
 };
 
 const firstNoteDate = firstNote[0] ? new Date(firstNote[0].createdAt) : new Date();
@@ -112,6 +151,7 @@ if (convertMsToDays(today.valueOf() - firstNoteDate.valueOf()) >= 365) {
 	daysOffset.value = 0;
 }
 
+fetchUserLists();
 load();
 
 watch(daysOffset, () => {
@@ -119,6 +159,11 @@ watch(daysOffset, () => {
 });
 
 watch(syncTime, () => {
+	load();
+});
+
+watch(listId, () => {
+	if (listId.value === 'inputCustomUserListID') inputCustomUserListID();
 	load();
 });
 
@@ -131,7 +176,7 @@ watch(syncTime, () => {
 }
 
 .rangeLabel {
-	font-size: 0.8em;
+	font-size: 0.85em;
 	margin-bottom: 0.5em;
 	margin-top: 0;
 }
@@ -139,5 +184,33 @@ watch(syncTime, () => {
 .rangeButton {
 	background: none;
 	border: none;
+}
+
+.selectLabel {
+	display: block;
+	font-size: 0.9em;
+	font-weight: 600;
+	margin-bottom: 0.5em;
+}
+
+.selectInput {
+	width: 100%;
+	padding: 0.5em;
+	border: 1px solid var(--divider);
+	border-radius: 4px;
+	background-color: var(--bg);
+	color: var(--fg);
+	font-size: 1em;
+	cursor: pointer;
+
+	&:hover {
+		border-color: var(--fg);
+	}
+
+	&:focus {
+		outline: none;
+		border-color: var(--accent);
+		box-shadow: 0 0 0 2px var(--accent, rgba(0, 0, 0, 0.1));
+	}
 }
 </style>

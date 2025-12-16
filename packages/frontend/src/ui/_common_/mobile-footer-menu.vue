@@ -4,10 +4,16 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div ref="rootEl" :class="$style.root">
+<div ref="rootEl" :class="[$style.root, { [$style.withBackButton]: showBackButtonInNavbar }]">
 	<button :class="$style.item" class="_button" @click="drawerMenuShowing = true">
 		<div :class="$style.itemInner">
 			<i :class="$style.itemIcon" class="ti ti-menu-2"></i><span v-if="menuIndicated" :class="$style.itemIndicator" class="_blink"><i class="_indicatorCircle"></i></span>
+		</div>
+	</button>
+
+	<button v-if="showBackButtonInNavbar" :class="$style.item" class="_button" @click="goBack">
+		<div :class="$style.itemInner">
+			<i :class="$style.itemIcon" class="ti ti-arrow-left"></i>
 		</div>
 	</button>
 
@@ -46,9 +52,12 @@ import { $i } from '@/i.js';
 import * as os from '@/os.js';
 import { mainRouter } from '@/router.js';
 import { navbarItemDef } from '@/navbar.js';
+import { prefer } from '@/preferences.js';
 
 const drawerMenuShowing = defineModel<boolean>('drawerMenuShowing');
 const widgetsShowing = defineModel<boolean>('widgetsShowing');
+
+const showBackButtonInNavbar = ref(prefer.r.showBackButtonInNavbar);
 
 const rootEl = useTemplateRef('rootEl');
 
@@ -59,6 +68,10 @@ const menuIndicated = computed(() => {
 	}
 	return false;
 });
+
+function goBack() {
+	window.history.back();
+}
 
 const rootElHeight = ref(0);
 
@@ -87,6 +100,10 @@ watch(rootEl, () => {
 	background: var(--MI_THEME-navBg);
 	color: var(--MI_THEME-navFg);
 	border-top: solid 0.5px var(--MI_THEME-divider);
+
+	&.withBackButton {
+		grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr;
+	}
 }
 
 .item {

@@ -5859,6 +5859,18 @@ export interface Locale extends ILocale {
      * ウィンドウの初期サイズ
      */
     "startupWindowSize": string;
+    /**
+     * リストIDを入力
+     */
+    "inputCustomUserListID": string;
+    /**
+     * タイトルバーの戻るボタンを右側に表示する
+     */
+    "moveBackButtonToRightSideOfTitlebar": string;
+    /**
+     * スマホのナビゲーションバーに戻るボタンを表示する
+     */
+    "showBackButtonInNavbar": string;
     "_order": {
         /**
          * 新しい順

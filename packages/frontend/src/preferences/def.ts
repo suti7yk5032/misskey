@@ -553,4 +553,10 @@ export const PREF_DEF = definePreferences({
 	'startupWindowHeight': {
 		default: 500,
 	},
+	'moveBackButtonToRightSideOfTitlebar': {
+		default: false,
+	},
+	'showBackButtonInNavbar': {
+		default: false,
+	},
 });

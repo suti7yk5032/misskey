@@ -69,6 +69,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 								</MkPreferenceContainer>
 							</SearchMarker>
 
+							<SearchMaker :keywords="['back', 'titlebar']">
+								<MkPreferenceContainer k="moveBackButtonToRightSideOfTitlebar">
+									<MkSwitch v-model="moveBackButtonToRightSideOfTitlebar">
+										<template #label><SearchLabel>{{ i18n.ts.moveBackButtonToRightSideOfTitlebar }}</SearchLabel></template>
+									</MkSwitch>
+								</MkPreferenceContainer>
+							</SearchMaker>
+
 							<SearchMarker :keywords="['avatar', 'icon', 'decoration', 'show']">
 								<MkPreferenceContainer k="showAvatarDecorations">
 									<MkSwitch v-model="showAvatarDecorations">
@@ -960,6 +968,7 @@ const menuStyle = prefer.model('menuStyle');
 const makeEveryTextElementsSelectable = prefer.model('makeEveryTextElementsSelectable');
 const moveWidgetsToRightSide = prefer.model('moveWidgetsToRightSide');
 const autoShowReplies = prefer.model('autoShowReplies');
+const moveBackButtonToRightSideOfTitlebar = prefer.model('moveBackButtonToRightSideOfTitlebar');
 
 const fontSize = ref(miLocalStorage.getItem('fontSize'));
 const useSystemFont = ref(miLocalStorage.getItem('useSystemFont') != null);
@@ -1020,6 +1029,7 @@ watch([
 	moveWidgetsToRightSide,
 	animatedMfm,
 	advancedMfm,
+	moveBackButtonToRightSideOfTitlebar,
 ], () => {
 	suggestReload();
 });

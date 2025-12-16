@@ -10,10 +10,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<span :class="$style.instanceTitle">{{ instance.name ?? host }}</span>
 	</div>
 	<div :class="$style.controls">
-		<span :class="$style.left">
+		<span v-if="!moveBackButtonToRightSideOfTitlebar" :class="$style.left">
 			<button v-if="canBack" class="_button" :class="$style.button" @click="goBack"><i class="ti ti-arrow-left"></i></button>
 		</span>
-		<span :class="$style.right">
+		<span v-if="moveBackButtonToRightSideOfTitlebar" :class="$style.right">
+			<button v-if="canBack" class="_button" :class="$style.button" @click="goBack"><i class="ti ti-arrow-left"></i></button>
 		</span>
 	</div>
 </div>
@@ -26,6 +27,7 @@ import { instance } from '@/instance.js';
 import { prefer } from '@/preferences.js';
 
 const canBack = ref(true);
+const moveBackButtonToRightSideOfTitlebar = ref(prefer.s.moveBackButtonToRightSideOfTitlebar);
 
 function goBack() {
 	window.history.back();
@@ -35,6 +37,7 @@ function goBack() {
 <style lang="scss" module>
 .root {
 	--height: 36px;
+	position: relative;
 
 	background: var(--MI_THEME-navBg);
 	height: var(--height);
@@ -53,6 +56,7 @@ function goBack() {
 	position: absolute;
 	top: 0;
 	left: 0;
+	right: 0;
 	display: flex;
 	justify-content: center;
 	align-items: center;

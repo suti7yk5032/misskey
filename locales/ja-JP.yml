@@ -1468,6 +1468,9 @@ moveWidgetsToRightSide: "ウィジェットを右側に表示する"
 adsManager: "広告マネージャー"
 autoShowReplies: "自動で返信を見る"
 startupWindowSize: "ウィンドウの初期サイズ"
+inputCustomUserListID: "リストIDを入力"
+moveBackButtonToRightSideOfTitlebar: "タイトルバーの戻るボタンを右側に表示する"
+showBackButtonInNavbar: "スマホのナビゲーションバーに戻るボタンを表示する"
 
 _order:
   newest: "新しい順"

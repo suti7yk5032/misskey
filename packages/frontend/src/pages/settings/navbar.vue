@@ -44,8 +44,16 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 		<SearchMarker :keywords="['navbar', 'sidebar', 'toggle', 'button', 'sub']">
 			<MkPreferenceContainer k="showNavbarSubButtons">
-				<MkSwitch v-model="showNavbarSubButtons">
+				<MkSwitch v-model="prefer.s.showNavbarSubButtons">
 					<template #label><SearchLabel>{{ i18n.ts._settings.showNavbarSubButtons }}</SearchLabel></template>
+				</MkSwitch>
+			</MkPreferenceContainer>
+		</SearchMarker>
+
+		<SearchMarker :keywords="['back', 'button', 'navbar']">
+			<MkPreferenceContainer k="showBackButtonInNavbar">
+				<MkSwitch v-model="showBackButtonInNavbar">
+					<template #label><SearchLabel>{{ i18n.ts.showBackButtonInNavbar }}</SearchLabel></template>
 				</MkSwitch>
 			</MkPreferenceContainer>
 		</SearchMarker>
@@ -80,6 +88,7 @@ const itemTypeValues = computed(() => items.value.map(x => x.type));
 
 const menuDisplay = computed(store.makeGetterSetter('menuDisplay'));
 const showNavbarSubButtons = prefer.model('showNavbarSubButtons');
+const showBackButtonInNavbar = prefer.model('showBackButtonInNavbar');
 
 async function addItem() {
 	const menu = Object.keys(navbarItemDef).filter(k => !itemTypeValues.value.includes(k));
@@ -122,6 +131,7 @@ definePage(() => ({
 	title: i18n.ts.navbar,
 	icon: 'ti ti-list',
 }));
+
 </script>
 
 <style lang="scss" module>
