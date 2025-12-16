@@ -189,6 +189,13 @@ export const navbarItemDef = reactive({
 			clearCache();
 		},
 	},
+	goBack: {
+		title: i18n.ts.goBack,
+		icon: 'ti ti-arrow-left',
+		action: (ev) => {
+			window.history.back();
+		},
+	},
 });
 
 if (iAmAdmin || $i?.policies.canManageCustomEmojis) {
