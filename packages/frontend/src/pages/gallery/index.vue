@@ -8,7 +8,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<div class="_spacer" style="--MI_SPACER-w: 1400px;">
 		<div v-if="tab === 'explore'">
 			<MkFoldableSection class="_margin">
-				<template #header><i class="ti ti-clock"></i>{{ i18n.ts.recentPosts }}</template>
+				<template #header><i class="ti ti-clock" style="margin-right: var(--MI-margin);"></i>{{ i18n.ts.recentPosts }}</template>
 				<MkPagination v-slot="{items}" :paginator="recentPostsPaginator">
 					<div :class="$style.items">
 						<MkGalleryPostPreview v-for="post in items" :key="post.id" :post="post" class="post"/>
@@ -16,7 +16,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</MkPagination>
 			</MkFoldableSection>
 			<MkFoldableSection class="_margin">
-				<template #header><i class="ti ti-comet"></i>{{ i18n.ts.popularPosts }}</template>
+				<template #header><i class="ti ti-comet" style="margin-right: var(--MI-margin);"></i>{{ i18n.ts.popularPosts }}</template>
 				<MkPagination v-slot="{items}" :paginator="popularPostsPaginator">
 					<div :class="$style.items">
 						<MkGalleryPostPreview v-for="post in items" :key="post.id" :post="post" class="post"/>
@@ -32,8 +32,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 			</MkPagination>
 		</div>
 		<div v-else-if="tab === 'my'">
-			<MkA to="/gallery/new" class="_link" style="margin: 16px;"><i class="ti ti-plus"></i> {{ i18n.ts.postToGallery }}</MkA>
-			<MkPagination v-slot="{items}" :paginator="myPostsPaginator">
+			<MkButton rounded primary @click="newPost"><i class="ti ti-plus"></i> {{ i18n.ts.postToGallery }}</MkButton>
+			<MkPagination v-slot="{items}" style="margin-top: var(--MI-margin);" :paginator="myPostsPaginator">
 				<div :class="$style.items">
 					<MkGalleryPostPreview v-for="post in items" :key="post.id" :post="post" class="post"/>
 				</div>
@@ -48,10 +48,12 @@ import { watch, ref, computed, markRaw } from 'vue';
 import MkFoldableSection from '@/components/MkFoldableSection.vue';
 import MkPagination from '@/components/MkPagination.vue';
 import MkGalleryPostPreview from '@/components/MkGalleryPostPreview.vue';
+import MkButton from '@/components/MkButton.vue';
 import { definePage } from '@/page.js';
 import { i18n } from '@/i18n.js';
 import { useRouter } from '@/router.js';
 import { Paginator } from '@/utility/paginator.js';
+import { $i } from '@/i.js';
 
 const router = useRouter();
 
@@ -75,6 +77,10 @@ const likedPostsPaginator = markRaw(new Paginator('i/gallery/likes', {
 	limit: 5,
 }));
 
+const newPost = () => {
+	router.push('/gallery/new');
+};
+
 watch(() => props.tag, () => {
 	if (tagsRef.value) tagsRef.value.tags.toggleContent(props.tag == null);
 });
@@ -91,15 +97,20 @@ const headerTabs = computed(() => [{
 	key: 'explore',
 	title: i18n.ts.gallery,
 	icon: 'ti ti-icons',
-}, {
-	key: 'liked',
-	title: i18n.ts._gallery.liked,
-	icon: 'ti ti-heart',
-}, {
-	key: 'my',
-	title: i18n.ts._gallery.my,
-	icon: 'ti ti-edit',
 }]);
+
+if ($i != null) {
+	headerTabs.value.push({
+		key: 'liked',
+		title: i18n.ts._gallery.liked,
+		icon: 'ti ti-heart',
+	});
+	headerTabs.value.push({
+		key: 'my',
+		title: i18n.ts._gallery.my,
+		icon: 'ti ti-edit',
+	});
+}
 
 definePage(() => ({
 	title: i18n.ts.gallery,

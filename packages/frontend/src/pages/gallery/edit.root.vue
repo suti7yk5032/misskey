@@ -6,29 +6,29 @@ SPDX-License-Identifier: AGPL-3.0-only
 <template>
 <PageWithHeader :actions="headerActions" :tabs="headerTabs">
 	<div class="_spacer" style="--MI_SPACER-w: 800px; --MI_SPACER-min: 16px; --MI_SPACER-max: 32px;">
-		<MkInput v-model="title">
+		<MkInput v-model="title" style="margin-top: var(--MI-margin);">
 			<template #label>{{ i18n.ts.title }}</template>
 		</MkInput>
 
-		<MkTextarea v-model="description" :max="500">
+		<MkTextarea v-model="description" :max="500" style="margin-top: var(--MI-margin);">
 			<template #label>{{ i18n.ts.description }}</template>
 		</MkTextarea>
 
 		<div class="_gaps_s">
-			<div v-for="file in files" :key="file.id" class="wqugxsfx" :style="{ backgroundImage: file ? `url(${ file.thumbnailUrl })` : '' }">
+			<div v-for="file in files" :key="file.id" class="wqugxsfx" style="margin-top: var(--MI-margin);" :style="{ backgroundImage: file ? `url(${ file.thumbnailUrl })` : '' }">
 				<div class="name">{{ file.name }}</div>
 				<button v-tooltip="i18n.ts.remove" class="remove _button" @click="remove(file)"><i class="ti ti-x"></i></button>
 			</div>
-			<MkButton primary @click="chooseFile"><i class="ti ti-plus"></i> {{ i18n.ts.attachFile }}</MkButton>
+			<MkButton primary style="margin-top: var(--MI-margin);" @click="chooseFile"><i class="ti ti-plus"></i> {{ i18n.ts.attachFile }}</MkButton>
 		</div>
 
-		<MkSwitch v-model="isSensitive">{{ i18n.ts.markAsSensitive }}</MkSwitch>
+		<MkSwitch v-model="isSensitive" style="margin-top: var(--MI-margin);">{{ i18n.ts.markAsSensitive }}</MkSwitch>
 
 		<div class="_buttons">
-			<MkButton v-if="props.post != null" primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
-			<MkButton v-else primary @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.publish }}</MkButton>
+			<MkButton v-if="props.post != null" primary style="margin-top: var(--MI-margin);" @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.save }}</MkButton>
+			<MkButton v-else primary style="margin-top: var(--MI-margin);" @click="save"><i class="ti ti-device-floppy"></i> {{ i18n.ts.publish }}</MkButton>
 
-			<MkButton v-if="props.post != null" danger @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
+			<MkButton v-if="props.post != null" danger style="margin-top: var(--MI-margin);" @click="del"><i class="ti ti-trash"></i> {{ i18n.ts.delete }}</MkButton>
 		</div>
 	</div>
 </PageWithHeader>

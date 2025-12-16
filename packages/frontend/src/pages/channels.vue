@@ -69,6 +69,7 @@ import { definePage } from '@/page.js';
 import { i18n } from '@/i18n.js';
 import { useRouter } from '@/router.js';
 import { Paginator } from '@/utility/paginator.js';
+import { $i } from '@/i.js';
 
 const router = useRouter();
 
@@ -136,19 +137,25 @@ const headerTabs = computed(() => [{
 	key: 'featured',
 	title: i18n.ts._channel.featured,
 	icon: 'ti ti-comet',
-}, {
-	key: 'favorites',
-	title: i18n.ts.favorites,
-	icon: 'ti ti-star',
-}, {
-	key: 'following',
-	title: i18n.ts._channel.following,
-	icon: 'ti ti-eye',
-}, {
-	key: 'owned',
-	title: i18n.ts._channel.owned,
-	icon: 'ti ti-edit',
 }]);
+
+if ($i != null) {
+	headerTabs.value.push({
+		key: 'favorites',
+		title: i18n.ts.favorites,
+		icon: 'ti ti-star',
+	});
+	headerTabs.value.push({
+		key: 'following',
+		title: i18n.ts._channel.following,
+		icon: 'ti ti-eye',
+	});
+	headerTabs.value.push({
+		key: 'owned',
+		title: i18n.ts._channel.owned,
+		icon: 'ti ti-edit',
+	});
+}
 
 definePage(() => ({
 	title: i18n.ts.channel,
