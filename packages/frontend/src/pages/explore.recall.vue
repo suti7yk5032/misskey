@@ -19,7 +19,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<MkSwitch v-model="syncTime" click="">
 			<template #label>{{ i18n.ts.recallSyncTime }}</template>
 		</MkSwitch>
-		<MkSelect v-model="listId" style="margin-top: var(--MI-margin);" :class="$style.selectInput" :items="userLists">
+		<MkSelect v-model="listId" style="margin-top: var(--MI-margin);" :items="userLists">
 			<template #label>{{ i18n.ts.lists }}</template>
 		</MkSelect>
 	</MkFoldableSection>
@@ -53,7 +53,7 @@ const listId = ref<string>('');
 const paginatorForNotes = shallowRef<Paginator<'notes/timeline' | 'notes/user-list-timeline'> | null>(null);
 const daysOffset = ref(0);
 const today = new Date();
-const daysMax = ref(firstNote[0] ? convertMsToDays(today.valueOf() - new Date(firstNote[0].createdAt).valueOf()) : 0);
+const daysMax = ref(firstNote[0] ? convertMsToDays(new Date(today.toUTCString()).valueOf() - new Date(firstNote[0].createdAt).valueOf()) : 0);
 const strSinceDate = ref('');
 const userLists = ref<Array<{ label: string; value: string }>>([{ label: i18n.ts.none, value: '' }]);
 
@@ -191,26 +191,5 @@ watch(listId, () => {
 	font-size: 0.9em;
 	font-weight: 600;
 	margin-bottom: 0.5em;
-}
-
-.selectInput {
-	width: 100%;
-	padding: 0.5em;
-	border: 1px solid var(--divider);
-	border-radius: 4px;
-	background-color: var(--bg);
-	color: var(--fg);
-	font-size: 1em;
-	cursor: pointer;
-
-	&:hover {
-		border-color: var(--fg);
-	}
-
-	&:focus {
-		outline: none;
-		border-color: var(--accent);
-		box-shadow: 0 0 0 2px var(--accent, rgba(0, 0, 0, 0.1));
-	}
 }
 </style>
