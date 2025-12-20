@@ -332,9 +332,8 @@ definePage(() => ({
 	margin-bottom: 16px;
 
 	> .button {
-		& + .button {
-			margin-left: 8px;
-		}
+		margin-bottom: 8px;
+		margin-right: 8px;
 	}
 }
 
