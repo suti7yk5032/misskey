@@ -193,6 +193,9 @@ export const navbarItemDef = reactive({
 		title: i18n.ts.goBack,
 		icon: 'ti ti-arrow-left',
 		action: (ev) => {
+			if (ev.currentTarget instanceof HTMLElement) {
+				ev.currentTarget.blur();
+			}
 			window.history.back();
 		},
 	},
