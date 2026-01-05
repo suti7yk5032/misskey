@@ -46,17 +46,6 @@ const convertMsToDays = (ms: number) => {
 	return Math.floor(ms / 86400000);
 };
 
-const firstNote = await misskeyApi('notes', { local: true, limit: 1, sinceDate: 1 });
-const tlKey = ref(0);
-const syncTime = ref(false);
-const listId = ref<string>('');
-const paginatorForNotes = shallowRef<Paginator<'notes/timeline' | 'notes/user-list-timeline'> | null>(null);
-const daysOffset = ref(0);
-const today = new Date();
-const daysMax = ref(firstNote[0] ? convertMsToDays(new Date(today.toUTCString()).valueOf() - new Date(firstNote[0].createdAt).valueOf()) : 0);
-const strSinceDate = ref('');
-const userLists = ref<Array<{ label: string; value: string }>>([{ label: i18n.ts.none, value: '' }]);
-
 const dateSubtractDays = (date: Date, days: number, time: Array<number> | null = null) => {
 	const d = new Date(date);
 	const t = time ?? [0, 0, 0, 0];
@@ -64,6 +53,18 @@ const dateSubtractDays = (date: Date, days: number, time: Array<number> | null =
 	d.setHours(t[0], t[1], t[2], t[3]);
 	return d;
 };
+
+const firstNote = await misskeyApi('notes', { local: true, limit: 1, sinceDate: 1 });
+const tlKey = ref(0);
+const syncTime = ref(false);
+const listId = ref<string>('');
+const paginatorForNotes = shallowRef<Paginator<'notes/timeline' | 'notes/user-list-timeline'> | null>(null);
+const daysOffset = ref(0);
+const today = new Date();
+const localTimeOffset = new Date(firstNote[0].createdAt).getTimezoneOffset() * 60 * 1000 * -1;
+const daysMax = ref(firstNote[0] ? convertMsToDays(dateSubtractDays(today, 0, [0, 0, 0, 0]).valueOf() - dateSubtractDays(new Date(firstNote[0].createdAt), 0, [0, 0, 0, 0]).valueOf()) : 0);
+const strSinceDate = ref('');
+const userLists = ref<Array<{ label: string; value: string }>>([{ label: i18n.ts.none, value: '' }]);
 
 const pickRandomOffsetDays = () => {
 	return Math.floor(Math.random() * daysMax.value);
