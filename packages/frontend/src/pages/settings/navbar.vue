@@ -86,7 +86,7 @@ const items = ref(prefer.s.menu.map(x => ({
 })));
 const itemTypeValues = computed(() => items.value.map(x => x.type));
 
-const menuDisplay = computed(store.makeGetterSetter('menuDisplay'));
+const menuDisplay = store.model('menuDisplay');
 const showNavbarSubButtons = prefer.model('showNavbarSubButtons');
 const showBackButtonInNavbar = prefer.model('showBackButtonInNavbar');
 
