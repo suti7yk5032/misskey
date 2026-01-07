@@ -62,7 +62,7 @@ const daysSinceFirstNote = firstNote[0] ? convertMsToDays(dateSubtractDays(today
 const tlKey = ref(0);
 const syncTime = ref(false);
 const listId = ref<string>('');
-const daysOffset = ref(daysSinceFirstNote >= 365 ? 365 : 0);
+const daysOffset = ref(daysSinceFirstNote >= 365 ? daysSinceFirstNote - 365 : 0);
 const daysMax = ref(daysSinceFirstNote);
 const strSinceDate = ref('');
 const userLists = ref<Array<{ label: string; value: string }>>([{ label: i18n.ts.none, value: '' }]);
