@@ -30,7 +30,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { markRaw, shallowRef, ref, watch, onMounted } from 'vue';
+import { markRaw, shallowRef, ref, watch } from 'vue';
 import { lang } from '@@/js/config.js';
 import MkNotesTimeline from '@/components/MkNotesTimeline.vue';
 import { i18n } from '@/i18n.js';
@@ -54,18 +54,19 @@ const dateSubtractDays = (date: Date, days: number, time: Array<number> | null =
 	return d;
 };
 
+const today = new Date();
 const firstNote = await misskeyApi('notes', { local: true, limit: 1, sinceDate: 1 });
-const localTimeOffset = new Date(firstNote[0].createdAt).getTimezoneOffset() * 60 * 1000 * -1;
+const firstNoteDate = firstNote[0] ? new Date(firstNote[0].createdAt) : new Date();
+const daysSinceFirstNote = firstNote[0] ? convertMsToDays(dateSubtractDays(today, 0, [0, 0, 0, 0]).valueOf() - dateSubtractDays(firstNoteDate, 0, [0, 0, 0, 0]).valueOf()) : 0;
+
 const tlKey = ref(0);
 const syncTime = ref(false);
 const listId = ref<string>('');
-const paginatorForNotes = shallowRef<Paginator<'notes/timeline' | 'notes/user-list-timeline'> | null>(null);
-const daysOffset = ref(0);
-const today = new Date();
-
-const daysMax = ref(firstNote[0] ? convertMsToDays(dateSubtractDays(today, 0, [0, 0, 0, 0]).valueOf() - dateSubtractDays(new Date(firstNote[0].createdAt), 0, [0, 0, 0, 0]).valueOf() + localTimeOffset) : 0);
+const daysOffset = ref(daysSinceFirstNote >= 365 ? 365 : 0);
+const daysMax = ref(daysSinceFirstNote);
 const strSinceDate = ref('');
 const userLists = ref<Array<{ label: string; value: string }>>([{ label: i18n.ts.none, value: '' }]);
+const paginatorForNotes = shallowRef<Paginator<'notes/timeline' | 'notes/user-list-timeline'> | null>(null);
 
 const pickRandomOffsetDays = () => {
 	return Math.floor(Math.random() * daysMax.value);
@@ -145,13 +146,6 @@ const fetchUserLists = async () => {
 	}
 	userLists.value.push({ label: i18n.ts.inputCustomUserListID, value: 'inputCustomUserListID' });
 };
-
-const firstNoteDate = firstNote[0] ? new Date(firstNote[0].createdAt) : new Date();
-if (convertMsToDays(today.valueOf() - firstNoteDate.valueOf()) >= 365) {
-	daysOffset.value = convertMsToDays(today.valueOf() - firstNoteDate.valueOf()) - 365;
-} else {
-	daysOffset.value = 0;
-}
 
 fetchUserLists();
 load();
