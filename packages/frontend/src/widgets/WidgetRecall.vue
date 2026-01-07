@@ -38,26 +38,32 @@ const name = 'recall';
 const widgetPropsDef = {
 	showHeader: {
 		type: 'boolean',
+		label: i18n.ts._widgetOptions.showHeader,
 		default: true,
 	},
 	height: {
 		type: 'number',
+		label: i18n.ts._widgetOptions.height,
 		default: 500,
 	},
 	limit: {
 		type: 'number',
+		label: i18n.ts._widgetOptions._recall.limit,
 		default: 5,
 	},
 	listId: {
 		type: 'string',
+		label: i18n.ts._widgetOptions._recall.listId,
 		default: '',
 	},
 	syncTime: {
 		type: 'boolean',
+		label: i18n.ts.recallSyncTime,
 		default: true,
 	},
 	fixedOneYear: {
 		type: 'boolean',
+		label: i18n.ts._widgetOptions._recall.fixedOneYear,
 		default: false,
 	},
 } satisfies FormWithDefault;

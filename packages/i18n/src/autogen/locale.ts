@@ -10090,6 +10090,20 @@ export interface Locale extends ILocale {
              */
             "period": string;
         };
+        "_recall": {
+            /**
+             * 取得頻度
+             */
+            "limit": string;
+            /**
+             * リストID
+             */
+            "listId": string;
+            /**
+             * 一年前のノートを固定表示
+             */
+            "fixedOneYear": string;
+        };
     };
     "_cw": {
         /**

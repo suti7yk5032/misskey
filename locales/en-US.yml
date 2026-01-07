@@ -2557,6 +2557,13 @@ _widgets:
   birthdayFollowings: "Today's Birthdays"
   chat: "Chat with user"
   recall: "Recall"
+
+_widgetOptions:
+  _recall:
+    limit: "Acquisition frequency"
+    listId: "List ID"
+    fixedOneYear: "Use fixed one-year interval"
+
 _cw:
   hide: "Hide"
   show: "Show content"
