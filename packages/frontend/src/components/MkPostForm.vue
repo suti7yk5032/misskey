@@ -100,6 +100,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<button v-tooltip="i18n.ts.useCw" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: useCw }]" @click="useCw = !useCw"><i class="ti ti-eye-off"></i></button>
 			<button v-tooltip="i18n.ts.hashtags" class="_button" :class="[$style.footerButton, { [$style.footerButtonActive]: withHashtags }]" @click="withHashtags = !withHashtags"><i class="ti ti-hash"></i></button>
 			<button v-tooltip="i18n.ts.mention" class="_button" :class="$style.footerButton" @click="insertMention"><i class="ti ti-at"></i></button>
+			<button v-tooltip="i18n.ts.inputDatetime" class="_button" :class="$style.footerButton" @click="insertDatetime"><i class="ti ti-calendar"></i></button>
 			<button v-if="showAddMfmFunction" v-tooltip="i18n.ts.addMfmFunction" :class="['_button', $style.footerButton]" @click="insertMfmFunction"><i class="ti ti-palette"></i></button>
 			<button v-if="postFormActions.length > 0" v-tooltip="i18n.ts.plugins" class="_button" :class="$style.footerButton" @click="showActions"><i class="ti ti-plug"></i></button>
 		</div>
@@ -1401,6 +1402,14 @@ function showTour() {
 	}]).then(() => {
 		closeTip('postForm');
 	});
+}
+
+async function insertDatetime() {
+	const { canceled, result } = await os.inputDatetime({
+		title: i18n.ts.inputDatetime,
+	});
+	if (canceled) return;
+	insertTextAtCursor(textareaEl.value, '$[unixtime ' + Math.floor(result.getTime() / 1000) + ']');
 }
 
 onMounted(() => {

@@ -4,6 +4,7 @@
  */
 
 import type { DeckProfile } from '@/deck.js';
+import type { SoundStore } from '@/preferences/def.js';
 import { genId } from '@/utility/id.js';
 import { store } from '@/store.js';
 import { prefer } from '@/preferences.js';
@@ -12,7 +13,6 @@ import { deckStore } from '@/ui/deck/deck-store.js';
 import { unisonReload } from '@/utility/unison-reload.js';
 import * as os from '@/os.js';
 import { i18n } from '@/i18n.js';
-import type { SoundStore } from '@/preferences/def.js';
 
 // TODO: そのうち消す
 export function migrateOldSettings() {
@@ -135,6 +135,7 @@ export function migrateOldSettings() {
 		prefer.commit('defaultNoteLocalOnly', store.s.defaultNoteLocalOnly);
 		prefer.commit('moveWidgetsToRightSide', store.s.moveWidgetsToRightSide);
 		prefer.commit('autoShowReplies', store.s.autoShowReplies);
+		prefer.commit('autoResizeStartupWindow', store.s.autoResizeStartupWindow);
 		prefer.commit('startupWindowWidth', store.s.startupWindowWidth);
 		prefer.commit('startupWindowHeight', store.s.startupWindowHeight);
 		prefer.commit('moveBackButtonToRightSideOfTitlebar', store.s.moveBackButtonToRightSideOfTitlebar);

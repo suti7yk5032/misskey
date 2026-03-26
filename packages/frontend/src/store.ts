@@ -487,6 +487,10 @@ export const store = markRaw(new Pizzax('base', {
 		where: 'device',
 		default: false,
 	},
+	autoResizeStartupWindow: {
+		where: 'device',
+		default: true,
+	},
 	//#endregion
 }));
 

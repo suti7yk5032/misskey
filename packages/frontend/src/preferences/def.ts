@@ -563,4 +563,7 @@ export const PREF_DEF = definePreferences({
 	'showBackButtonInNavbar': {
 		default: false,
 	},
+	'autoResizeStartupWindow': {
+		default: true,
+	},
 });

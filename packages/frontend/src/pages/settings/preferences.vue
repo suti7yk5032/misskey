@@ -879,6 +879,12 @@ SPDX-License-Identifier: AGPL-3.0-only
 								<template #label><SearchLabel>{{ i18n.ts.startupWindowSize }}</SearchLabel></template>
 
 								<div class="_gaps_m">
+									<MkPreferenceContainer k="autoResizeStartupWindow">
+										<MkSwitch v-model="autoResizeStartupWindow">
+											<template #label><SearchLabel>{{ i18n.ts.autoResizeStartupWindow }}</SearchLabel></template>
+										</MkSwitch>
+									</MkPreferenceContainer>
+
 									<MkPreferenceContainer k="startupWindowWidth">
 										<MkRange v-model="startupWindowWidth" :min="200" :max="1920" :step="10" easing>
 											<template #label><SearchLabel>{{ i18n.ts.width }}</SearchLabel></template>
@@ -1010,6 +1016,7 @@ const makeEveryTextElementsSelectable = prefer.model('makeEveryTextElementsSelec
 const moveWidgetsToRightSide = prefer.model('moveWidgetsToRightSide');
 const autoShowReplies = prefer.model('autoShowReplies');
 const moveBackButtonToRightSideOfTitlebar = prefer.model('moveBackButtonToRightSideOfTitlebar');
+const autoResizeStartupWindow = prefer.model('autoResizeStartupWindow');
 
 const fontSize = ref(miLocalStorage.getItem('fontSize') as '1' | '2' | '3' | null);
 const useSystemFont = ref(miLocalStorage.getItem('useSystemFont') != null);

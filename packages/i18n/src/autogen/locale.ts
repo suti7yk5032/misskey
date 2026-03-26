@@ -5868,6 +5868,10 @@ export interface Locale extends ILocale {
      */
     "startupWindowSize": string;
     /**
+     * ウィンドウサイズを自動調整する
+     */
+    "autoResizeStartupWindow": string;
+    /**
      * リストIDを入力
      */
     "inputCustomUserListID": string;
@@ -5879,6 +5883,10 @@ export interface Locale extends ILocale {
      * スマホのナビゲーションバーに戻るボタンを表示する
      */
     "showBackButtonInNavbar": string;
+    /**
+     * 日時を入力
+     */
+    "inputDatetime": string;
     "_order": {
         /**
          * 新しい順
