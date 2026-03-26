@@ -5,9 +5,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 <template>
 <MkWindow
+	v-bind="windowSizeProps"
 	ref="windowEl"
-	:initialWidth="prefer.r['startupWindowWidth'].value"
-	:initialHeight="prefer.r['startupWindowHeight'].value"
 	:canResize="true"
 	:closeButton="true"
 	:buttonsLeft="buttonsLeft"
@@ -90,6 +89,8 @@ function getSearchMarker(path: string) {
 }
 
 const searchMarkerId = ref<string | null>(getSearchMarker(props.initialPath));
+
+props;
 
 windowRouter.addListener('push', ctx => {
 	_history_.value.push({ path: ctx.fullPath });
@@ -181,6 +182,14 @@ onMounted(() => {
 
 onUnmounted(() => {
 	openingWindowsCount.value--;
+});
+
+const autoResizeStartupWindow = computed(() => prefer.r['autoResizeStartupWindow'].value);
+
+const windowSizeProps = computed(() => {
+	return autoResizeStartupWindow.value
+		? {}
+		: { initialWidth: prefer.r['startupWindowWidth'].value, initialHeight: prefer.r['startupWindowHeight'].value };
 });
 
 defineExpose({
