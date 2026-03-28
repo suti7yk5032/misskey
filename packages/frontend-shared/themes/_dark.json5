@@ -70,7 +70,7 @@
 		codeNumber: '#cfff9e',
 		codeBoolean: '#c59eff',
 		deckBg: '#000',
-		htmlThemeColor: '@bg',
+		htmlThemeColor: '@navBg',
 	},
 
 	codeHighlighter: {

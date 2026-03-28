@@ -41,7 +41,7 @@
 		fgHighlighted: ':lighten<3<@fg',
 		panelHeaderBg: ':lighten<3<@panel',
 		panelHeaderFg: '@fg',
-		htmlThemeColor: '@bg',
+		htmlThemeColor: '@navBg',
 		fgOnWhite: '@accent',
 		panelHighlight: ':lighten<3<@panel',
 		scrollbarHandle: 'rgba(255, 255, 255, 0.2)',

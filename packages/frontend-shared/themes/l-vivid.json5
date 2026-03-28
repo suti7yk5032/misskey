@@ -43,7 +43,7 @@
 		fgOnWhite: '@accent',
 		panelHeaderBg: ':lighten<3<@panel',
 		panelHeaderFg: '@fg',
-		htmlThemeColor: '@bg',
+		htmlThemeColor: '@navBg',
 		panelHighlight: ':darken<3<@panel',
 		scrollbarHandle: 'rgba(0, 0, 0, 0.2)',
 		scrollbarHandleHover: 'rgba(0, 0, 0, 0.4)',

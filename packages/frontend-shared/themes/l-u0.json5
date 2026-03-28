@@ -54,7 +54,7 @@
 		panelHeaderFg: '@fg',
 		buttonGradateA: '@accent',
 		buttonGradateB: ':hue<20<@accent',
-		htmlThemeColor: '@bg',
+		htmlThemeColor: '@navBg',
 		panelHighlight: ':lighten<3<@panel',
 		scrollbarHandle: '#74747433',
 		inputBorderHover: 'rgba(255, 255, 255, 0.2)',
