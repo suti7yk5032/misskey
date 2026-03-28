@@ -162,6 +162,7 @@ export class ClientServerService {
 			'name': this.meta.name || this.config.host,
 			'start_url': '/',
 			'display': 'standalone',
+			'display_override': ['window-controls-overlay', 'standalone'],
 			'background_color': '#313a42',
 			// 空文字列の場合右辺を使いたいため
 			// eslint-disable-next-line @typescript-eslint/prefer-nullish-coalescing
