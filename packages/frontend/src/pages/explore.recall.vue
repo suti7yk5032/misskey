@@ -11,6 +11,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<button :class="$style.rangeButton" :disabled="daysOffset <= 0" @click="decrementDay"><i class="ti ti-caret-left"></i></button>
 			<MkRange v-model="daysOffset" style="flex-grow: 1; margin-left: var(--MI-margin);" :min="0" :max="daysMax" :step="1" easing :textConverter="(v) => (daysMax - v) === 0 ? `${i18n.ts.today}` : `${i18n.tsx._ago.daysAgo({ n: daysMax - v })}`"></MkRange>
 			<button :class="$style.rangeButton" style="margin-left: var(--MI-margin);" :disabled="daysOffset >= daysMax" @click="incrementDay"><i class="ti ti-caret-right"></i></button>
+			<button :class="$style.rangeButton" style="margin-left: var(--MI-margin);" @click="selectDay"><i class="ti ti-calendar"></i></button>
 			<button :class="$style.rangeButton" style="margin-left: var(--MI-margin);" @click="shuffleDay"><i class="ti ti-arrows-shuffle"></i></button>
 		</div>
 	</div>
@@ -32,6 +33,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import { markRaw, shallowRef, ref, watch } from 'vue';
 import { lang } from '@@/js/config.js';
+import { RESULT_WHATS_NEW_DATA } from 'storybook/internal/core-events';
 import MkNotesTimeline from '@/components/MkNotesTimeline.vue';
 import { i18n } from '@/i18n.js';
 import { Paginator } from '@/utility/paginator.js';
@@ -146,6 +148,21 @@ const fetchUserLists = async () => {
 	}
 	userLists.value.push({ label: i18n.ts.inputCustomUserListID, value: 'inputCustomUserListID' });
 };
+
+async function selectDay() {
+	const { canceled, result } = await os.inputDatetime({
+		title: i18n.ts.inputDatetime,
+		default: dateSubtractDays(today, 0, [0, 0, 0, 0]).toISOString().slice(0, 16),
+	});
+	if (canceled) return;
+	if (result.valueOf() - firstNoteDate.valueOf() < 0) {
+		daysOffset.value = 0;
+	} else if (result.valueOf() - firstNoteDate.valueOf() > today.valueOf() - firstNoteDate.valueOf()) {
+		daysOffset.value = daysMax.value;
+	} else {
+		daysOffset.value = convertMsToDays(dateSubtractDays(result, 0, [0, 0, 0, 0]).valueOf() - dateSubtractDays(firstNoteDate, 0, [0, 0, 0, 0]).valueOf());
+	}
+}
 
 fetchUserLists();
 load();
