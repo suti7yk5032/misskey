@@ -1408,6 +1408,7 @@ inputCustomUserListID: "Enter custom user list ID"
 moveBackButtonToRightSideOfTitlebar: "Move back button to the right side of the title bar"
 showBackButtonInNavbar: "Show back button in navigation bar (Smartphone only)"
 inputDatetime: "Enter date and time"
+apiDocument: "API documentation"
 
 createUserSpecifiedNote: "Create a direct note"
 schedulePost: "Schedule note"

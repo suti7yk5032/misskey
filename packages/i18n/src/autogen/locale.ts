@@ -5891,6 +5891,10 @@ export interface Locale extends ILocale {
      * 日時を入力
      */
     "inputDatetime": string;
+    /**
+     * APIドキュメント
+     */
+    "apiDocument": string;
     "_order": {
         /**
          * 新しい順

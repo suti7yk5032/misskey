@@ -1476,6 +1476,7 @@ inputCustomUserListID: "リストIDを入力"
 moveBackButtonToRightSideOfTitlebar: "タイトルバーの戻るボタンを右側に表示する"
 showBackButtonInNavbar: "スマホのナビゲーションバーに戻るボタンを表示する"
 inputDatetime: "日時を入力"
+apiDocument: "APIドキュメント"
 
 _order:
   newest: "新しい順"

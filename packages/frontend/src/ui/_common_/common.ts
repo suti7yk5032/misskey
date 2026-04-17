@@ -152,6 +152,14 @@ export function openInstanceMenu(ev: PointerEvent) {
 		target: '_blank',
 	});
 
+	menuItems.push({
+		type: 'a',
+		text: i18n.ts.apiDocument,
+		icon: 'ti ti-api',
+		href: '/api-doc',
+		target: '_blank',
+	});
+
 	if ($i) {
 		menuItems.push({
 			text: i18n.ts._initialTutorial.launchTutorial,
