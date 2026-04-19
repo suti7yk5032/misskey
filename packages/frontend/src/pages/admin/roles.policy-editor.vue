@@ -389,7 +389,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 	<XFolder v-if="matchQuery([i18n.ts._role._options.canManageAds, 'canManageAds'])" v-model:policyMeta="policyMetaModel.canManageAds" :isBaseRole="isBaseRole" :readonly="readonly">
 		<template #label>{{ i18n.ts._role._options.canManageAds }}</template>
-		<template #valueText>{{ valuesModel.watermarkAvailable ? i18n.ts.yes : i18n.ts.no }}</template>
+		<template #valueText>{{ valuesModel.canManageAds ? i18n.ts.yes : i18n.ts.no }}</template>
 		<template #default="{ disabled }">
 			<MkSwitch v-model="valuesModel.canManageAds" :disabled="disabled">
 				<template #label>{{ i18n.ts.enable }}</template>
