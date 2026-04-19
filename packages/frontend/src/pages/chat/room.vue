@@ -40,8 +40,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 					tag="div" class="_gaps"
 				>
 					<template v-for="item in timeline.toReversed()" :key="item.id">
-						<XMessage v-if="item.type === 'item'" :message="item.data"/>
-						<div v-else-if="item.type === 'date'" :class="$style.dateDivider">
+						<XMessage v-if="item.type === 'item'" :message="item.data" :data-scroll-anchor="item.id"/>
+						<div v-else-if="item.type === 'date'" :class="$style.dateDivider" :data-scroll-anchor="item.id">
 							<span><i class="ti ti-chevron-up"></i> {{ item.nextText }}</span>
 							<span style="height: 1em; width: 1px; background: var(--MI_THEME-divider);"></span>
 							<span>{{ item.prevText }} <i class="ti ti-chevron-down"></i></span>
