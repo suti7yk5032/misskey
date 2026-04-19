@@ -4,7 +4,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<PageWithHeader v-model:tab="tab" :reversed="tab === 'chat'" :tabs="headerTabs" :actions="headerActions">
+<PageWithHeader v-model:tab="tab" :reversed="useReversedLayout" :tabs="headerTabs" :actions="headerActions">
 	<div v-if="tab === 'chat'" class="_spacer" style="--MI_SPACER-w: 700px;">
 		<div class="_gaps">
 			<div v-if="initializing">
@@ -88,7 +88,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { ref, useTemplateRef, computed, onMounted, onBeforeUnmount, onDeactivated, onActivated } from 'vue';
+import { ref, useTemplateRef, computed, onMounted, onBeforeUnmount, onDeactivated, onActivated, nextTick } from 'vue';
 import * as Misskey from 'misskey-js';
 import { getScrollContainer } from '@@/js/scroll.js';
 import XMessage from './XMessage.vue';
@@ -136,10 +136,24 @@ const user = ref<Misskey.entities.UserDetailed | null>(null);
 const room = ref<Misskey.entities.ChatRoom | null>(null);
 const connection = ref<Misskey.IChannelConnection<Misskey.Channels['chatUser']> | Misskey.IChannelConnection<Misskey.Channels['chatRoom']> | null>(null);
 const showIndicator = ref(false);
+const tab = ref('chat');
 const timelineEl = useTemplateRef('timelineEl');
 const timeline = makeDateSeparatedTimelineComputedRef(messages);
+const userAgent = navigator.userAgent.toLowerCase();
+const isIos = /iphone|ipad|ipod/.test(userAgent) || (userAgent.includes('macintosh') && navigator.maxTouchPoints > 1);
+const useReversedLayout = computed(() => tab.value === 'chat' && !isIos);
 
 const SCROLL_HEAD_THRESHOLD = 200;
+
+function scrollTimelineToBottom() {
+	const scrollContainer = getScrollContainer(timelineEl.value);
+	if (!scrollContainer) return;
+
+	scrollContainer.scrollTo({
+		top: scrollContainer.scrollHeight,
+		behavior: 'instant',
+	});
+}
 
 // column-reverseなので本来はスクロール位置の最下部への追従は不要なはずだが、おそらくブラウザのバグにより、最下部にスクロールした状態でも追従されない場合がある(スクロール位置が少数になることがあるのが関わっていそう)
 // そのため補助としてMutationObserverを使って追従を行う
@@ -148,13 +162,22 @@ useMutationObserver(timelineEl, {
 	childList: true,
 	attributes: false,
 }, () => {
-	const scrollContainer = getScrollContainer(timelineEl.value)!;
-	// column-reverseなのでscrollTopは負になる
-	if (-scrollContainer.scrollTop < SCROLL_HEAD_THRESHOLD) {
-		scrollContainer.scrollTo({
-			top: 0,
-			behavior: 'instant',
-		});
+	const scrollContainer = getScrollContainer(timelineEl.value);
+	if (!scrollContainer) return;
+
+	if (useReversedLayout.value) {
+		// column-reverseなのでscrollTopは負になる
+		if (-scrollContainer.scrollTop < SCROLL_HEAD_THRESHOLD) {
+			scrollContainer.scrollTo({
+				top: 0,
+				behavior: 'instant',
+			});
+		}
+	} else {
+		const distanceToBottom = scrollContainer.scrollHeight - (scrollContainer.scrollTop + scrollContainer.clientHeight);
+		if (distanceToBottom < SCROLL_HEAD_THRESHOLD) {
+			scrollTimelineToBottom();
+		}
 	}
 });
 
@@ -254,6 +277,11 @@ async function initialize() {
 
 	initialized.value = true;
 	initializing.value = false;
+
+	if (!useReversedLayout.value) {
+		await nextTick();
+		scrollTimelineToBottom();
+	}
 }
 
 let isActivated = true;
@@ -417,8 +445,6 @@ function showMenu(ev: PointerEvent) {
 	os.popupMenu(menuItems, ev.currentTarget ?? ev.target);
 }
 
-const tab = ref('chat');
-
 const headerTabs = computed(() => room.value ? [{
 	key: 'chat',
 	title: i18n.ts._chat.messages,
@@ -491,9 +517,6 @@ definePage(computed(() => {
 	position: absolute;
 }
 
-.root {
-}
-
 .more {
 	margin: 0 auto;
 }
@@ -521,10 +544,6 @@ definePage(computed(() => {
 .newIcon {
 	display: inline-block;
 	margin-right: 8px;
-}
-
-.footer {
-
 }
 
 .form {
