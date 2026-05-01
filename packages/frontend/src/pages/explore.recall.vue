@@ -8,11 +8,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<div style="margin-bottom: var(--MI-margin);">
 		<p :class="$style.rangeLabel">{{ i18n.ts.recallDays }} | {{ strSinceDate }}</p>
 		<div :class="$style.inputForm">
-			<button :class="$style.rangeButton" :disabled="daysOffset <= 0" @click="decrementDay"><i class="ti ti-caret-left"></i></button>
-			<MkRange v-model="daysOffset" style="flex-grow: 1; margin-left: var(--MI-margin);" :min="0" :max="daysMax" :step="1" easing :textConverter="(v) => (daysMax - v) === 0 ? `${i18n.ts.today}` : `${i18n.tsx._ago.daysAgo({ n: daysMax - v })}`"></MkRange>
-			<button :class="$style.rangeButton" style="margin-left: var(--MI-margin);" :disabled="daysOffset >= daysMax" @click="incrementDay"><i class="ti ti-caret-right"></i></button>
-			<button :class="$style.rangeButton" style="margin-left: var(--MI-margin);" @click="selectDay"><i class="ti ti-calendar"></i></button>
-			<button :class="$style.rangeButton" style="margin-left: var(--MI-margin);" @click="shuffleDay"><i class="ti ti-arrows-shuffle"></i></button>
+			<MkButton v-tooltip="i18n.ts.previousDay" :active="daysOffset > 0" iconOnly transparent rounded @click="decrementDay"><i class="ti ti-caret-left"></i></MkButton>
+			<MkRange v-model="daysOffset" style="flex-grow: 1;" :min="0" :max="daysMax" :step="1" easing :textConverter="(v) => (daysMax - v) === 0 ? `${i18n.ts.today}` : `${i18n.tsx._ago.daysAgo({ n: daysMax - v })}`"></MkRange>
+			<MkButton v-tooltip="i18n.ts.nextDay" :active="daysOffset < daysMax" iconOnly transparent rounded @click="incrementDay"><i class="ti ti-caret-right"></i></MkButton>
+			<MkButton v-tooltip="i18n.ts.jumpToSpecifiedDate" iconOnly transparent rounded @click="selectDay"><i class="ti ti-calendar"></i></MkButton>
+			<MkButton v-tooltip="i18n.ts.random" iconOnly transparent rounded @click="shuffleDay"><i class="ti ti-arrows-shuffle"></i></MkButton>
 		</div>
 	</div>
 	<MkFoldableSection style="margin-bottom: var(--MI-margin);" :expanded="false">
@@ -43,6 +43,7 @@ import MkSelect from '@/components/MkSelect.vue';
 import MkSwitch from '@/components/MkSwitch.vue';
 import { misskeyApi } from '@/utility/misskey-api.js';
 import * as os from '@/os.js';
+import MkButton from '@/components/MkButton.vue';
 
 const convertMsToDays = (ms: number) => {
 	return Math.floor(ms / 86400000);
@@ -150,17 +151,18 @@ const fetchUserLists = async () => {
 };
 
 async function selectDay() {
-	const { canceled, result } = await os.inputDatetime({
+	const { canceled, result } = await os.inputDate({
 		title: i18n.ts.inputDatetime,
-		default: dateSubtractDays(today, 0, [0, 0, 0, 0]).toISOString().slice(0, 16),
+		default: `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`,
 	});
 	if (canceled) return;
-	if (result.valueOf() - firstNoteDate.valueOf() < 0) {
+	const selectedDate = new Date(`${result}T00:00:00`);
+	if (selectedDate.valueOf() - firstNoteDate.valueOf() < 0) {
 		daysOffset.value = 0;
-	} else if (result.valueOf() - firstNoteDate.valueOf() > today.valueOf() - firstNoteDate.valueOf()) {
+	} else if (selectedDate.valueOf() - firstNoteDate.valueOf() > today.valueOf() - firstNoteDate.valueOf()) {
 		daysOffset.value = daysMax.value;
 	} else {
-		daysOffset.value = convertMsToDays(dateSubtractDays(result, 0, [0, 0, 0, 0]).valueOf() - dateSubtractDays(firstNoteDate, 0, [0, 0, 0, 0]).valueOf());
+		daysOffset.value = convertMsToDays(dateSubtractDays(selectedDate, 0, [0, 0, 0, 0]).valueOf() - dateSubtractDays(firstNoteDate, 0, [0, 0, 0, 0]).valueOf());
 	}
 }
 
@@ -185,7 +187,8 @@ watch(listId, () => {
 <style lang="scss" module>
 .inputForm {
   display: flex;
-  justify-content: flex-start;
+  align-items: center;
+	gap: 10px;
 }
 
 .rangeLabel {

@@ -1409,6 +1409,8 @@ moveBackButtonToRightSideOfTitlebar: "Move back button to the right side of the 
 showBackButtonInNavbar: "Show back button in navigation bar (Smartphone only)"
 inputDatetime: "Enter date and time"
 apiDocument: "API documentation"
+nextDay: "Next day"
+previousDay: "Previous day"
 
 createUserSpecifiedNote: "Create a direct note"
 schedulePost: "Schedule note"

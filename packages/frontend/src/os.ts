@@ -486,6 +486,30 @@ export function inputDatetime(props: {
 	});
 }
 
+export function inputDate(props: {
+	title?: string;
+	text?: string;
+	placeholder?: string | null;
+	default?: string | null;
+}): Promise<MkDialogReturnType<string>> {
+	return new Promise(resolve => {
+		const { dispose } = popup(MkDialog, {
+			title: props.title,
+			text: props.text,
+			input: {
+				type: 'date',
+				placeholder: props.placeholder,
+				default: props.default ?? null,
+			},
+		}, {
+			done: result => {
+				resolve(result != null && typeof result.result === 'string' ? { result: result.result, canceled: false } : { result: undefined, canceled: true });
+			},
+			closed: () => dispose(),
+		});
+	});
+}
+
 export function authenticateDialog(): Promise<{
 	canceled: true; result: undefined;
 } | {

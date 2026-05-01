@@ -5895,6 +5895,14 @@ export interface Locale extends ILocale {
      * APIドキュメント
      */
     "apiDocument": string;
+    /**
+     * 次の日
+     */
+    "nextDay": string;
+    /**
+     * 前の日
+     */
+    "previousDay": string;
     "_order": {
         /**
          * 新しい順
