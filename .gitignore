@@ -38,8 +38,7 @@ coverage
 !/.config/cypress-devcontainer.yml
 docker-compose.yml
 ./compose.yml
-.devcontainer/compose.yml
-!/.devcontainer/compose.yml
+/.devcontainer/devcontainer-lock.json
 
 # misskey
 /build
