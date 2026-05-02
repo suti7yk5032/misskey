@@ -75,6 +75,7 @@ export default defineConfig((args) => {
 		'ipaddr.js',
 		'oauth2orize',
 		'file-type',
+		'@misskey-dev/summaly'
 	];
 
 	if (isE2E) {
