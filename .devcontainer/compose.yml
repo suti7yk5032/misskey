@@ -1,5 +1,6 @@
 services:
   app:
+    image: localhost/misskey_devcontainer-app:latest
     build:
       context: .
       dockerfile: Dockerfile
