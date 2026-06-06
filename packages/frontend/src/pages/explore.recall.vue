@@ -9,10 +9,22 @@ SPDX-License-Identifier: AGPL-3.0-only
 		<p :class="$style.rangeLabel">{{ i18n.ts.recallDays }} | {{ strSinceDate }}</p>
 		<div :class="$style.inputForm">
 			<MkButton v-tooltip="i18n.ts.previousDay" :active="daysOffset > 0" iconOnly transparent rounded @click="decrementDay"><i class="ti ti-caret-left"></i></MkButton>
-			<MkRange v-model="daysOffset" style="flex-grow: 1;" :min="0" :max="daysMax" :step="1" easing :textConverter="(v) => (daysMax - v) === 0 ? `${i18n.ts.today}` : `${i18n.tsx._ago.daysAgo({ n: daysMax - v })}`"></MkRange>
-			<MkButton v-tooltip="i18n.ts.nextDay" :active="daysOffset < daysMax" iconOnly transparent rounded @click="incrementDay"><i class="ti ti-caret-right"></i></MkButton>
+			<MkRange v-model="daysOffset" style="flex-grow: 1;" :min="0" :max="daysSinceFirstNote" :step="1" easing :textConverter="(v) => (daysSinceFirstNote - v) === 0 ? `${i18n.ts.today}` : `${i18n.tsx._ago.daysAgo({ n: daysSinceFirstNote - v })}`"></MkRange>
+			<MkButton v-tooltip="i18n.ts.nextDay" :active="daysOffset < daysSinceFirstNote" iconOnly transparent rounded @click="incrementDay"><i class="ti ti-caret-right"></i></MkButton>
 			<MkButton v-tooltip="i18n.ts.jumpToSpecifiedDate" iconOnly transparent rounded @click="selectDay"><i class="ti ti-calendar"></i></MkButton>
 			<MkButton v-tooltip="i18n.ts.random" iconOnly transparent rounded @click="shuffleDay"><i class="ti ti-arrows-shuffle"></i></MkButton>
+		</div>
+		<div :class="$style.inputForm">
+			<div :class="$style.subtractButtonForm">
+				<MkButton :class="$style.subtractButton" iconOnly transparent rounded @click="decrementNumberSubtractUnit"><i class="ti ti-caret-down"></i></MkButton>
+				<MkButton :class="$style.subtractButton" @click="setDateByYears(numberSubtractUnit)">{{ i18n.tsx._ago.yearsAgo({ n: numberSubtractUnit }) }}</MkButton>
+				<MkButton :class="$style.subtractButton" @click="setDateByMonths(numberSubtractUnit)">{{ i18n.tsx._ago.monthsAgo({ n: numberSubtractUnit }) }}</MkButton>
+				<MkButton :class="$style.subtractButton" @click="setDateByWeeks(numberSubtractUnit)">{{ i18n.tsx._ago.weeksAgo({ n: numberSubtractUnit }) }}</MkButton>
+				<MkButton :class="$style.subtractButton" iconOnly transparent rounded @click="incrementNumberSubtractUnit"><i class="ti ti-caret-up"></i></MkButton>
+			</div>
+			<div :class="$style.subtractButtonFormRight">
+				<MkButton :class="$style.subtractButton" @click="setDaysOffset(0)">{{ i18n.ts.today }}</MkButton>
+			</div>
 		</div>
 	</div>
 	<MkFoldableSection style="margin-bottom: var(--MI-margin);" :expanded="false">
@@ -33,7 +45,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import { markRaw, shallowRef, ref, watch } from 'vue';
 import { lang } from '@@/js/config.js';
-import { RESULT_WHATS_NEW_DATA } from 'storybook/internal/core-events';
 import MkNotesTimeline from '@/components/MkNotesTimeline.vue';
 import { i18n } from '@/i18n.js';
 import { Paginator } from '@/utility/paginator.js';
@@ -49,7 +60,7 @@ const convertMsToDays = (ms: number) => {
 	return Math.floor(ms / 86400000);
 };
 
-const dateSubtractDays = (date: Date, days: number, time: Array<number> | null = null) => {
+const subtractDays = (date: Date, days: number, time?: Array<number>) => {
 	const d = new Date(date);
 	const t = time ?? [0, 0, 0, 0];
 	d.setDate(d.getDate() - days);
@@ -57,41 +68,12 @@ const dateSubtractDays = (date: Date, days: number, time: Array<number> | null =
 	return d;
 };
 
-const today = new Date();
-const firstNote = await misskeyApi('notes', { local: true, limit: 1, sinceDate: 1 });
-const firstNoteDate = firstNote[0] ? new Date(firstNote[0].createdAt) : new Date();
-const daysSinceFirstNote = firstNote[0] ? convertMsToDays(dateSubtractDays(today, 0, [0, 0, 0, 0]).valueOf() - dateSubtractDays(firstNoteDate, 0, [0, 0, 0, 0]).valueOf()) : 0;
-
-const tlKey = ref(0);
-const syncTime = ref(false);
-const listId = ref<string>('');
-const daysOffset = ref(daysSinceFirstNote >= 365 ? daysSinceFirstNote - 365 : 0);
-const daysMax = ref(daysSinceFirstNote);
-const strSinceDate = ref('');
-const userLists = ref<Array<{ label: string; value: string }>>([{ label: i18n.ts.none, value: '' }]);
-const paginatorForNotes = shallowRef<Paginator<'notes/timeline' | 'notes/user-list-timeline'> | null>(null);
-
-const pickRandomOffsetDays = () => {
-	return Math.floor(Math.random() * daysMax.value);
+const pickRandomDays = (days: number) => {
+	return Math.floor(days * Math.random());
 };
 
-const shuffleDay = () => {
-	daysOffset.value = pickRandomOffsetDays();
-};
-
-const decrementDay = () => {
-	if (daysOffset.value <= 0) return;
-	daysOffset.value--;
-};
-
-const incrementDay = () => {
-	if (daysOffset.value >= daysMax.value) return;
-	daysOffset.value++;
-};
-
-const getStrSinceDate = (daysAgo?: number) => {
-	const dateAgo = daysAgo !== undefined ? dateSubtractDays(today, daysAgo) : dateSubtractDays(today, 0);
-	return dateAgo.toLocaleDateString(lang, {
+const getStrSinceDate = (date: Date) => {
+	return date.toLocaleDateString(lang, {
 		weekday: 'long',
 		year: 'numeric',
 		month: 'long',
@@ -99,11 +81,95 @@ const getStrSinceDate = (daysAgo?: number) => {
 	});
 };
 
+const today = new Date();
+const firstNote = await misskeyApi('notes', { local: true, limit: 1, sinceDate: 1 });
+const firstNoteDate = firstNote[0] ? new Date(firstNote[0].createdAt) : new Date();
+
+const sinceDate = ref(new Date());
+const untilDate = ref(new Date());
+
+// 最初のノートから何日経ったかの日数
+const daysSinceFirstNote = firstNote[0] ? convertMsToDays(subtractDays(today, 0, [0, 0, 0, 0]).valueOf() - subtractDays(firstNoteDate, 0, [0, 0, 0, 0]).valueOf()) : 0;
+// 今日から何日を引くかの日数
+const daysAgo = ref(0);
+if (daysSinceFirstNote > 365) {
+	daysAgo.value = 365;
+} else {
+	daysAgo.value = daysSinceFirstNote;
+}
+// 最初のノートから何日経ったかの日数 (スライダー用)
+const daysOffset = ref(0);
+// ショートカットボタン用
+const numberSubtractUnit = ref(1);
+
+const tlKey = ref(0);
+const syncTime = ref(false);
+const listId = ref('');
+
+const strSinceDate = ref('');
+const userLists = ref([{ label: i18n.ts.none, value: '' }]);
+const paginatorForNotes = shallowRef<Paginator<'notes/timeline' | 'notes/user-list-timeline'> | null>(null);
+
+const setDate = (date: Date) => {
+	sinceDate.value = subtractDays(date, 0, [0, 0, 0, 0]);
+	untilDate.value = syncTime.value ? subtractDays(date, 0, [today.getHours(), today.getMinutes(), today.getSeconds(), 999]) : subtractDays(date, 0, [23, 59, 59, 999]);
+};
+
+const setDaysOffset = (days: number) => {
+	if (days > daysSinceFirstNote) {
+		daysOffset.value = 0;
+	} else {
+		daysOffset.value = daysSinceFirstNote - days;
+	}
+};
+
+const setDateByWeeks = (weeks: number) => {
+	const date = new Date(sinceDate.value);
+	date.setDate(date.getDate() - weeks * 7);
+	const days = convertMsToDays(subtractDays(today, 0, [0, 0, 0, 0]).valueOf() - subtractDays(date, 0, [0, 0, 0, 0]).valueOf());
+	setDaysOffset(days);
+};
+
+const setDateByMonths = (months: number) => {
+	const date = new Date(sinceDate.value);
+	date.setMonth(date.getMonth() - months);
+	const days = convertMsToDays(subtractDays(today, 0, [0, 0, 0, 0]).valueOf() - subtractDays(date, 0, [0, 0, 0, 0]).valueOf());
+	setDaysOffset(days);
+};
+
+const setDateByYears = (years: number) => {
+	const date = new Date(sinceDate.value);
+	date.setFullYear(date.getFullYear() - years);
+	const days = convertMsToDays(subtractDays(today, 0, [0, 0, 0, 0]).valueOf() - subtractDays(date, 0, [0, 0, 0, 0]).valueOf());
+	setDaysOffset(days);
+};
+
+const shuffleDay = () => {
+	setDaysOffset(pickRandomDays(daysSinceFirstNote));
+};
+
+const decrementDay = () => {
+	if (daysOffset.value <= 0) return;
+	setDaysOffset(daysSinceFirstNote - (daysOffset.value - 1));
+};
+
+const incrementDay = () => {
+	if (daysOffset.value >= daysSinceFirstNote) return;
+	setDaysOffset(daysSinceFirstNote - (daysOffset.value + 1));
+};
+
+const decrementNumberSubtractUnit = () => {
+	if (numberSubtractUnit.value <= 1) return;
+	numberSubtractUnit.value--;
+};
+
+const incrementNumberSubtractUnit = () => {
+	numberSubtractUnit.value++;
+};
+
 const load = () => {
-	const daysAgo = daysMax.value - daysOffset.value;
-	strSinceDate.value = getStrSinceDate(daysAgo);
-	const sinceDate = dateSubtractDays(today, daysAgo, [0, 0, 0, 0]).valueOf();
-	const untilDate = syncTime.value ? dateSubtractDays(today, daysAgo, [today.getHours(), today.getMinutes(), today.getSeconds(), 999]).valueOf() : dateSubtractDays(today, daysAgo, [23, 59, 59, 999]).valueOf();
+	strSinceDate.value = getStrSinceDate(sinceDate.value);
+
 	const endpoint: 'notes/timeline' | 'notes/user-list-timeline' = listId.value ? 'notes/user-list-timeline' : 'notes/timeline';
 	type TimelineParams = {
 		sinceDate: number;
@@ -114,8 +180,8 @@ const load = () => {
 		listId?: string;
 	};
 	const params: TimelineParams = {
-		sinceDate: sinceDate,
-		untilDate: untilDate,
+		sinceDate: sinceDate.value.valueOf(),
+		untilDate: untilDate.value.valueOf(),
 		includeLocalRenotes: false,
 		includeMyRenotes: false,
 		includeRenotedMyNotes: false,
@@ -160,20 +226,24 @@ async function selectDay() {
 	if (selectedDate.valueOf() - firstNoteDate.valueOf() < 0) {
 		daysOffset.value = 0;
 	} else if (selectedDate.valueOf() - firstNoteDate.valueOf() > today.valueOf() - firstNoteDate.valueOf()) {
-		daysOffset.value = daysMax.value;
+		daysOffset.value = daysSinceFirstNote;
 	} else {
-		daysOffset.value = convertMsToDays(dateSubtractDays(selectedDate, 0, [0, 0, 0, 0]).valueOf() - dateSubtractDays(firstNoteDate, 0, [0, 0, 0, 0]).valueOf());
+		daysOffset.value = daysSinceFirstNote - convertMsToDays(subtractDays(today, 0, [0, 0, 0, 0]).valueOf() - subtractDays(selectedDate, 0, [0, 0, 0, 0]).valueOf());
 	}
 }
 
 fetchUserLists();
+setDate(subtractDays(today, daysAgo.value));
 load();
 
 watch(daysOffset, () => {
+	daysAgo.value = daysSinceFirstNote - daysOffset.value;
+	setDate(subtractDays(today, daysAgo.value));
 	load();
 });
 
 watch(syncTime, () => {
+	setDate(sinceDate.value);
 	load();
 });
 
@@ -189,6 +259,7 @@ watch(listId, () => {
   display: flex;
   align-items: center;
 	gap: 10px;
+	margin-bottom: 0.5em;
 }
 
 .rangeLabel {
@@ -208,4 +279,22 @@ watch(listId, () => {
 	font-weight: 600;
 	margin-bottom: 0.5em;
 }
+
+.subtractButton {
+	margin-bottom: 0.5em;
+}
+
+.subtractButtonForm {
+	display: flex;
+	align-items: flex-start;
+	gap: 5px;
+}
+
+.subtractButtonFormRight {
+	display: flex;
+	align-items: flex-start;
+	gap: 5px;
+	margin-left: auto;
+}
+
 </style>
