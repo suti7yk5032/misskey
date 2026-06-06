@@ -98,7 +98,7 @@ if (daysSinceFirstNote > 365) {
 	daysAgo.value = daysSinceFirstNote;
 }
 // 最初のノートから何日経ったかの日数 (スライダー用)
-const daysOffset = ref(0);
+const daysOffset = ref(daysSinceFirstNote - daysAgo.value);
 // ショートカットボタン用
 const numberSubtractUnit = ref(1);
 
