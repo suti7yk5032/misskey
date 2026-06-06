@@ -605,6 +605,10 @@ export const ROUTE_DEF = [{
 	component: page(() => import('@/pages/debug.vue')),
 	loginRequired: false,
 }, {
+	path: '/recall',
+	component: page(() => import('@/pages/explore.recall.vue')),
+	loginRequired: true,
+}, {
 	// テスト用リダイレクト設定。ログイン中ユーザのプロフィールにリダイレクトする
 	path: '/redirect-test',
 	redirect: $i ? `@${$i.username}` : '/',

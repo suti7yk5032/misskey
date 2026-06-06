@@ -145,6 +145,11 @@ export const navbarItemDef = reactive<{
 		icon: 'ti ti-device-gamepad',
 		to: '/games',
 	},
+	recall: {
+		title: i18n.ts.recall,
+		icon: 'ti ti-clock-hour-2',
+		to: '/recall',
+	},
 	ui: {
 		title: i18n.ts.switchUi,
 		icon: 'ti ti-devices',
