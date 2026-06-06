@@ -87,3 +87,6 @@ images/
 # Custom
 /.devcontainer/devcontainer_custom.yml
 /.devcontainer/scripts/
+
+# Affinity
+*.af~lock~
