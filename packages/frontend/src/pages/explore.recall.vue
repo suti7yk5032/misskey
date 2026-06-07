@@ -282,12 +282,20 @@ watch(listId, () => {
 
 .subtractButton {
 	margin-bottom: 0.5em;
+	@media (max-width: 585px) {
+		min-width: 6em;
+		flex: 1;
+	}
 }
 
 .subtractButtonForm {
 	display: flex;
 	align-items: flex-start;
 	gap: 5px;
+	@media (max-width: 585px) {
+		margin-left: auto;
+		margin-right: auto;
+	}
 }
 
 .subtractButtonFormRight {
@@ -295,6 +303,9 @@ watch(listId, () => {
 	align-items: flex-start;
 	gap: 5px;
 	margin-left: auto;
+	@media (max-width: 585px) {
+		display: none;
+	}
 }
 
 </style>
