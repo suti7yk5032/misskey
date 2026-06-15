@@ -14,9 +14,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<div v-else-if="tab === 'roles'">
 		<XRoles/>
 	</div>
-	<div v-else-if="tab === 'recall'">
-		<XRecall/>
-	</div>
 </PageWithHeader>
 </template>
 
@@ -25,7 +22,6 @@ import { computed, watch, ref, useTemplateRef } from 'vue';
 import XFeatured from './explore.featured.vue';
 import XUsers from './explore.users.vue';
 import XRoles from './explore.roles.vue';
-import XRecall from './explore.recall.vue';
 import { definePage } from '@/page.js';
 import { i18n } from '@/i18n.js';
 import { $i } from '@/i.js';
@@ -55,11 +51,6 @@ if ( $i != null ) {
 		key: 'roles',
 		icon: 'ti ti-badges',
 		title: i18n.ts.roles,
-	});
-	tabs.push({
-		key: 'recall',
-		icon: 'ti ti-clock-hour-2',
-		title: i18n.ts.recall,
 	});
 }
 

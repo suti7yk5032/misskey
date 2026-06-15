@@ -55,6 +55,7 @@ import MkSwitch from '@/components/MkSwitch.vue';
 import { misskeyApi } from '@/utility/misskey-api.js';
 import * as os from '@/os.js';
 import MkButton from '@/components/MkButton.vue';
+import { definePage } from '@/page.js';
 
 const convertMsToDays = (ms: number) => {
 	return Math.floor(ms / 86400000);
@@ -231,6 +232,11 @@ async function selectDay() {
 		daysOffset.value = daysSinceFirstNote - convertMsToDays(subtractDays(today, 0, [0, 0, 0, 0]).valueOf() - subtractDays(selectedDate, 0, [0, 0, 0, 0]).valueOf());
 	}
 }
+
+definePage(() => ({
+	title: i18n.ts.recall,
+	icon: 'ti ti-clock-hour-2',
+}));
 
 fetchUserLists();
 setDate(subtractDays(today, daysAgo.value));

@@ -606,7 +606,7 @@ export const ROUTE_DEF = [{
 	loginRequired: false,
 }, {
 	path: '/recall',
-	component: page(() => import('@/pages/explore.recall.vue')),
+	component: page(() => import('@/pages/recall.vue')),
 	loginRequired: true,
 }, {
 	// テスト用リダイレクト設定。ログイン中ユーザのプロフィールにリダイレクトする
