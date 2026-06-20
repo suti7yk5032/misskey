@@ -8,22 +8,22 @@ SPDX-License-Identifier: AGPL-3.0-only
 	<div style="margin-bottom: var(--MI-margin);">
 		<p :class="$style.rangeLabel">{{ i18n.ts.recallDays }} | {{ strSinceDate }}</p>
 		<div :class="$style.inputForm">
-			<MkButton v-tooltip="i18n.ts.previousDay" :active="daysOffset > 0" iconOnly transparent rounded @click="decrementDay"><i class="ti ti-caret-left"></i></MkButton>
+			<MkButton v-tooltip="i18n.ts.firstDay" :active="daysOffset > 0" iconOnly transparent rounded @click="setDaysOffset(daysSinceFirstNote)"><i class="ti ti-player-skip-back"></i></MkButton>
+			<MkButton v-tooltip="i18n.ts.previousDay" :active="daysOffset > 0" iconOnly transparent rounded @click="decrementDay"><i class="ti ti-player-track-prev"></i></MkButton>
 			<MkRange v-model="daysOffset" style="flex-grow: 1;" :min="0" :max="daysSinceFirstNote" :step="1" easing :textConverter="(v) => (daysSinceFirstNote - v) === 0 ? `${i18n.ts.today}` : `${i18n.tsx._ago.daysAgo({ n: daysSinceFirstNote - v })}`"></MkRange>
-			<MkButton v-tooltip="i18n.ts.nextDay" :active="daysOffset < daysSinceFirstNote" iconOnly transparent rounded @click="incrementDay"><i class="ti ti-caret-right"></i></MkButton>
+			<MkButton v-tooltip="i18n.ts.nextDay" :active="daysOffset < daysSinceFirstNote" iconOnly transparent rounded @click="incrementDay"><i class="ti ti-player-track-next"></i></MkButton>
+			<MkButton v-tooltip="i18n.ts.today" :active="daysOffset < daysSinceFirstNote" iconOnly transparent rounded @click="setDaysOffset(0)"><i class="ti ti-player-skip-forward"></i></MkButton>
 			<MkButton v-tooltip="i18n.ts.jumpToSpecifiedDate" iconOnly transparent rounded @click="selectDay"><i class="ti ti-calendar"></i></MkButton>
 			<MkButton v-tooltip="i18n.ts.random" iconOnly transparent rounded @click="shuffleDay"><i class="ti ti-arrows-shuffle"></i></MkButton>
 		</div>
 		<div :class="$style.inputForm">
 			<div :class="$style.subtractButtonForm">
+				<MkButton :class="$style.subtractButton" iconOnly transparent rounded @click="reverseNumberSubtractUnit"><i class="ti ti-refresh"></i></MkButton>
 				<MkButton :class="$style.subtractButton" iconOnly transparent rounded @click="decrementNumberSubtractUnit"><i class="ti ti-caret-down"></i></MkButton>
-				<MkButton :class="$style.subtractButton" @click="setDateByYears(numberSubtractUnit)">{{ i18n.tsx._ago.yearsAgo({ n: numberSubtractUnit }) }}</MkButton>
-				<MkButton :class="$style.subtractButton" @click="setDateByMonths(numberSubtractUnit)">{{ i18n.tsx._ago.monthsAgo({ n: numberSubtractUnit }) }}</MkButton>
-				<MkButton :class="$style.subtractButton" @click="setDateByWeeks(numberSubtractUnit)">{{ i18n.tsx._ago.weeksAgo({ n: numberSubtractUnit }) }}</MkButton>
+				<MkButton :class="$style.subtractButton" @click="setDateByYears(numberSubtractUnit)">{{ getYearsLabel(numberSubtractUnit) }}</MkButton>
+				<MkButton :class="$style.subtractButton" @click="setDateByMonths(numberSubtractUnit)">{{ getMonthsLabel(numberSubtractUnit) }}</MkButton>
+				<MkButton :class="$style.subtractButton" @click="setDateByWeeks(numberSubtractUnit)">{{ getWeeksLabel(numberSubtractUnit) }}</MkButton>
 				<MkButton :class="$style.subtractButton" iconOnly transparent rounded @click="incrementNumberSubtractUnit"><i class="ti ti-caret-up"></i></MkButton>
-			</div>
-			<div :class="$style.subtractButtonFormRight">
-				<MkButton :class="$style.subtractButton" @click="setDaysOffset(0)">{{ i18n.ts.today }}</MkButton>
 			</div>
 		</div>
 	</div>
@@ -102,6 +102,25 @@ if (daysSinceFirstNote > 365) {
 const daysOffset = ref(daysSinceFirstNote - daysAgo.value);
 // ショートカットボタン用
 const numberSubtractUnit = ref(1);
+const isReverseNumberSubtractUnit = ref(false);
+
+const getYearsLabel = (years: number) => {
+	return isReverseNumberSubtractUnit.value
+		? i18n.tsx._timeIn.years({ n: years.toString() })
+		: i18n.tsx._ago.yearsAgo({ n: years.toString() });
+};
+
+const getMonthsLabel = (months: number) => {
+	return isReverseNumberSubtractUnit.value
+		? i18n.tsx._timeIn.months({ n: months.toString() })
+		: i18n.tsx._ago.monthsAgo({ n: months.toString() });
+};
+
+const getWeeksLabel = (weeks: number) => {
+	return isReverseNumberSubtractUnit.value
+		? i18n.tsx._timeIn.weeks({ n: weeks.toString() })
+		: i18n.tsx._ago.weeksAgo({ n: weeks.toString() });
+};
 
 const tlKey = ref(0);
 const syncTime = ref(false);
@@ -119,6 +138,8 @@ const setDate = (date: Date) => {
 const setDaysOffset = (days: number) => {
 	if (days > daysSinceFirstNote) {
 		daysOffset.value = 0;
+	} else if (days < 0) {
+		daysOffset.value = daysSinceFirstNote;
 	} else {
 		daysOffset.value = daysSinceFirstNote - days;
 	}
@@ -126,23 +147,34 @@ const setDaysOffset = (days: number) => {
 
 const setDateByWeeks = (weeks: number) => {
 	const date = new Date(sinceDate.value);
-	date.setDate(date.getDate() - weeks * 7);
+	const direction = isReverseNumberSubtractUnit.value ? 1 : -1;
+	date.setDate(date.getDate() + (weeks * 7 * direction));
 	const days = convertMsToDays(subtractDays(today, 0, [0, 0, 0, 0]).valueOf() - subtractDays(date, 0, [0, 0, 0, 0]).valueOf());
 	setDaysOffset(days);
 };
 
 const setDateByMonths = (months: number) => {
 	const date = new Date(sinceDate.value);
-	date.setMonth(date.getMonth() - months);
+	const direction = isReverseNumberSubtractUnit.value ? 1 : -1;
+	date.setMonth(date.getMonth() + (months * direction));
 	const days = convertMsToDays(subtractDays(today, 0, [0, 0, 0, 0]).valueOf() - subtractDays(date, 0, [0, 0, 0, 0]).valueOf());
 	setDaysOffset(days);
 };
 
 const setDateByYears = (years: number) => {
 	const date = new Date(sinceDate.value);
-	date.setFullYear(date.getFullYear() - years);
+	const direction = isReverseNumberSubtractUnit.value ? 1 : -1;
+	date.setFullYear(date.getFullYear() + (years * direction));
 	const days = convertMsToDays(subtractDays(today, 0, [0, 0, 0, 0]).valueOf() - subtractDays(date, 0, [0, 0, 0, 0]).valueOf());
 	setDaysOffset(days);
+};
+
+const reverseNumberSubtractUnit = () => {
+	if (isReverseNumberSubtractUnit.value) {
+		isReverseNumberSubtractUnit.value = false;
+	} else {
+		isReverseNumberSubtractUnit.value = true;
+	}
 };
 
 const shuffleDay = () => {

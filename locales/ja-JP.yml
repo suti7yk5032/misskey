@@ -1488,8 +1488,9 @@ moveBackButtonToRightSideOfTitlebar: "タイトルバーの戻るボタンを右
 showBackButtonInNavbar: "スマホのナビゲーションバーに戻るボタンを表示する"
 inputDatetime: "日時を入力"
 apiDocument: "APIドキュメント"
-nextDay: "次の日"
-previousDay: "前の日"
+nextDay: "翌日"
+previousDay: "前日"
+firstDay: "初日"
 
 _order:
   newest: "新しい順"

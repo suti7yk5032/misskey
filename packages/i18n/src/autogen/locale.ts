@@ -5940,13 +5940,17 @@ export interface Locale extends ILocale {
      */
     "apiDocument": string;
     /**
-     * 次の日
+     * 翌日
      */
     "nextDay": string;
     /**
-     * 前の日
+     * 前日
      */
     "previousDay": string;
+    /**
+     * 初日
+     */
+    "firstDay": string;
     "_order": {
         /**
          * 新しい順
