@@ -13,20 +13,23 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<MkRange v-model="daysOffset" style="flex-grow: 1;" :min="0" :max="daysSinceFirstNote" :step="1" easing :textConverter="(v) => (daysSinceFirstNote - v) === 0 ? `${i18n.ts.today}` : `${i18n.tsx._ago.daysAgo({ n: daysSinceFirstNote - v })}`"></MkRange>
 			<MkButton v-tooltip="i18n.ts.nextDay" :active="daysOffset < daysSinceFirstNote" iconOnly transparent rounded @click="incrementDay"><i class="ti ti-player-track-next"></i></MkButton>
 			<MkButton v-tooltip="i18n.ts.today" :active="daysOffset < daysSinceFirstNote" iconOnly transparent rounded @click="setDaysOffset(0)"><i class="ti ti-player-skip-forward"></i></MkButton>
-			<MkButton v-tooltip="i18n.ts.jumpToSpecifiedDate" iconOnly transparent rounded @click="selectDay"><i class="ti ti-calendar"></i></MkButton>
-			<MkButton v-tooltip="i18n.ts.random" iconOnly transparent rounded @click="shuffleDay"><i class="ti ti-arrows-shuffle"></i></MkButton>
 		</div>
 		<div :class="$style.inputForm">
 			<div :class="$style.subtractButtonForm">
-				<MkButton :class="$style.subtractButton" iconOnly transparent rounded @click="reverseNumberSubtractUnit"><i class="ti ti-refresh"></i></MkButton>
+				<MkButton :class="$style.subtractButton" iconOnly transparent rounded @click="reverseNumberSubtractUnit"><i class="ti ti-arrows-exchange-2"></i></MkButton>
 				<MkButton :class="$style.subtractButton" iconOnly transparent rounded @click="decrementNumberSubtractUnit"><i class="ti ti-caret-down"></i></MkButton>
-				<MkButton :class="$style.subtractButton" @click="setDateByYears(numberSubtractUnit)">{{ getYearsLabel(numberSubtractUnit) }}</MkButton>
-				<MkButton :class="$style.subtractButton" @click="setDateByMonths(numberSubtractUnit)">{{ getMonthsLabel(numberSubtractUnit) }}</MkButton>
-				<MkButton :class="$style.subtractButton" @click="setDateByWeeks(numberSubtractUnit)">{{ getWeeksLabel(numberSubtractUnit) }}</MkButton>
+				<MkButton :class="$style.subtractButtonWithText" @click="setDateByYears(numberSubtractUnit)">{{ getYearsLabel(numberSubtractUnit) }}</MkButton>
+				<MkButton :class="$style.subtractButtonWithText" @click="setDateByMonths(numberSubtractUnit)">{{ getMonthsLabel(numberSubtractUnit) }}</MkButton>
+				<MkButton :class="$style.subtractButtonWithText" @click="setDateByWeeks(numberSubtractUnit)">{{ getWeeksLabel(numberSubtractUnit) }}</MkButton>
 				<MkButton :class="$style.subtractButton" iconOnly transparent rounded @click="incrementNumberSubtractUnit"><i class="ti ti-caret-up"></i></MkButton>
+			</div>
+			<div :class="$style.subtractButtonFormRight">
+				<MkButton v-tooltip="i18n.ts.jumpToSpecifiedDate" iconOnly transparent rounded @click="selectDay"><i class="ti ti-calendar"></i></MkButton>
+				<MkButton v-tooltip="i18n.ts.random" iconOnly transparent rounded @click="shuffleDay"><i class="ti ti-arrows-shuffle"></i></MkButton>
 			</div>
 		</div>
 	</div>
+
 	<MkFoldableSection style="margin-bottom: var(--MI-margin);" :expanded="false">
 		<template #header>{{ i18n.ts.options }}</template>
 		<MkSwitch v-model="syncTime" click="">
@@ -319,10 +322,17 @@ watch(listId, () => {
 }
 
 .subtractButton {
-	margin-bottom: 0.5em;
 	@media (max-width: 585px) {
 		min-width: 6em;
 		flex: 1;
+	}
+}
+
+.subtractButtonWithText {
+	@media (max-width: 585px) {
+		min-width: 6em;
+		flex: 1;
+		font-size: 0.8em;
 	}
 }
 
@@ -331,9 +341,9 @@ watch(listId, () => {
 	align-items: flex-start;
 	gap: 5px;
 	@media (max-width: 585px) {
-		margin-left: auto;
-		margin-right: auto;
+		gap: 1px;
 	}
+
 }
 
 .subtractButtonFormRight {
@@ -342,7 +352,7 @@ watch(listId, () => {
 	gap: 5px;
 	margin-left: auto;
 	@media (max-width: 585px) {
-		display: none;
+		gap: 1px;
 	}
 }
 
