@@ -4,45 +4,50 @@ SPDX-License-Identifier: AGPL-3.0-only
 -->
 
 <template>
-<div class="_spacer" style="--MI_SPACER-w: 800px;">
-	<div style="margin-bottom: var(--MI-margin);">
-		<p :class="$style.rangeLabel">{{ i18n.ts.recallDays }} | {{ strSinceDate }}</p>
-		<div :class="$style.inputForm">
-			<MkButton v-tooltip="i18n.ts.firstDay" :active="daysOffset > 0" iconOnly transparent rounded @click="setDaysOffset(daysSinceFirstNote)"><i class="ti ti-player-skip-back"></i></MkButton>
-			<MkButton v-tooltip="i18n.ts.previousDay" :active="daysOffset > 0" iconOnly transparent rounded @click="decrementDay"><i class="ti ti-player-track-prev"></i></MkButton>
-			<MkRange v-model="daysOffset" style="flex-grow: 1;" :min="0" :max="daysSinceFirstNote" :step="1" easing :textConverter="(v) => (daysSinceFirstNote - v) === 0 ? `${i18n.ts.today}` : `${i18n.tsx._ago.daysAgo({ n: daysSinceFirstNote - v })}`"></MkRange>
-			<MkButton v-tooltip="i18n.ts.nextDay" :active="daysOffset < daysSinceFirstNote" iconOnly transparent rounded @click="incrementDay"><i class="ti ti-player-track-next"></i></MkButton>
-			<MkButton v-tooltip="i18n.ts.today" :active="daysOffset < daysSinceFirstNote" iconOnly transparent rounded @click="setDaysOffset(0)"><i class="ti ti-player-skip-forward"></i></MkButton>
-		</div>
-		<div :class="$style.inputForm">
-			<div :class="$style.subtractButtonForm">
-				<MkButton :class="$style.subtractButton" iconOnly transparent rounded @click="reverseNumberSubtractUnit"><i class="ti ti-arrows-exchange-2"></i></MkButton>
-				<MkButton :class="$style.subtractButton" iconOnly transparent rounded @click="decrementNumberSubtractUnit"><i class="ti ti-caret-down"></i></MkButton>
-				<MkButton :class="$style.subtractButtonWithText" @click="setDateByYears(numberSubtractUnit)">{{ getYearsLabel(numberSubtractUnit) }}</MkButton>
-				<MkButton :class="$style.subtractButtonWithText" @click="setDateByMonths(numberSubtractUnit)">{{ getMonthsLabel(numberSubtractUnit) }}</MkButton>
-				<MkButton :class="$style.subtractButtonWithText" @click="setDateByWeeks(numberSubtractUnit)">{{ getWeeksLabel(numberSubtractUnit) }}</MkButton>
-				<MkButton :class="$style.subtractButton" iconOnly transparent rounded @click="incrementNumberSubtractUnit"><i class="ti ti-caret-up"></i></MkButton>
+<PageWithHeader>
+	<div class="_spacer" style="--MI_SPACER-w: 800px;">
+		<div style="margin-bottom: var(--MI-margin);">
+			<div :class="$style.calenderForm">
+				<div style="margin-right: auto;">
+					<MkButton v-tooltip="i18n.ts.jumpToSpecifiedDate" iconOnly transparent rounded @click="selectDay"><i class="ti ti-calendar"></i> {{ i18n.ts.recallDays }} | {{ strSinceDate }}</MkButton>
+				</div>
+				<div>
+					<MkButton v-tooltip="i18n.ts.random" iconOnly transparent rounded @click="shuffleDay"><i class="ti ti-arrows-shuffle"></i></MkButton>
+				</div>
 			</div>
-			<div :class="$style.subtractButtonFormRight">
-				<MkButton v-tooltip="i18n.ts.jumpToSpecifiedDate" iconOnly transparent rounded @click="selectDay"><i class="ti ti-calendar"></i></MkButton>
-				<MkButton v-tooltip="i18n.ts.random" iconOnly transparent rounded @click="shuffleDay"><i class="ti ti-arrows-shuffle"></i></MkButton>
+			<div :class="$style.inputForm">
+				<MkButton v-tooltip="i18n.ts.firstDay" :active="daysOffset > 0" iconOnly transparent rounded @click="setDaysOffset(daysSinceFirstNote)"><i class="ti ti-player-skip-back"></i></MkButton>
+				<MkButton v-tooltip="i18n.ts.previousDay" :active="daysOffset > 0" iconOnly transparent rounded @click="decrementDay"><i class="ti ti-player-track-prev"></i></MkButton>
+				<MkRange v-model="daysOffset" style="flex-grow: 1;" :min="0" :max="daysSinceFirstNote" :step="1" easing :textConverter="(v) => (daysSinceFirstNote - v) === 0 ? `${i18n.ts.today}` : `${i18n.tsx._ago.daysAgo({ n: daysSinceFirstNote - v })}`"></MkRange>
+				<MkButton v-tooltip="i18n.ts.nextDay" :active="daysOffset < daysSinceFirstNote" iconOnly transparent rounded @click="incrementDay"><i class="ti ti-player-track-next"></i></MkButton>
+				<MkButton v-tooltip="i18n.ts.today" :active="daysOffset < daysSinceFirstNote" iconOnly transparent rounded @click="setDaysOffset(0)"><i class="ti ti-player-skip-forward"></i></MkButton>
+			</div>
+			<div>
+				<div :class="$style.miscFormLeft">
+					<MkButton iconOnly transparent rounded @click="reverseNumberSubtractUnit"><i class="ti ti-arrows-exchange-2"></i></MkButton>
+					<MkButton iconOnly transparent rounded @click="decrementNumberSubtractUnit"><i class="ti ti-caret-down"></i></MkButton>
+					<MkButton :class="$style.subtractButton" @click="setDateByYears(numberSubtractUnit)">{{ getYearsLabel(numberSubtractUnit) }}</MkButton>
+					<MkButton :class="$style.subtractButton" @click="setDateByMonths(numberSubtractUnit)">{{ getMonthsLabel(numberSubtractUnit) }}</MkButton>
+					<MkButton :class="$style.subtractButton" @click="setDateByWeeks(numberSubtractUnit)">{{ getWeeksLabel(numberSubtractUnit) }}</MkButton>
+					<MkButton iconOnly transparent rounded @click="incrementNumberSubtractUnit"><i class="ti ti-caret-up"></i></MkButton>
+				</div>
 			</div>
 		</div>
-	</div>
 
-	<MkFoldableSection style="margin-bottom: var(--MI-margin);" :expanded="false">
-		<template #header>{{ i18n.ts.options }}</template>
-		<MkSwitch v-model="syncTime" click="">
-			<template #label>{{ i18n.ts.recallSyncTime }}</template>
-		</MkSwitch>
-		<MkSelect v-model="listId" style="margin-top: var(--MI-margin);" :items="userLists">
-			<template #label>{{ i18n.ts.lists }}</template>
-		</MkSelect>
-	</MkFoldableSection>
-	<div v-if="paginatorForNotes">
-		<MkNotesTimeline :key="tlKey" :paginator="paginatorForNotes" :withControl="false"/>
+		<MkFoldableSection style="margin-bottom: var(--MI-margin);" :expanded="false">
+			<template #header>{{ i18n.ts.options }}</template>
+			<MkSwitch v-model="syncTime" click="">
+				<template #label>{{ i18n.ts.recallSyncTime }}</template>
+			</MkSwitch>
+			<MkSelect v-model="listId" style="margin-top: var(--MI-margin);" :items="userLists">
+				<template #label>{{ i18n.ts.lists }}</template>
+			</MkSelect>
+		</MkFoldableSection>
+		<div v-if="paginatorForNotes">
+			<MkNotesTimeline :key="tlKey" :paginator="paginatorForNotes" :withControl="false"/>
+		</div>
 	</div>
-</div>
+</PageWithHeader>
 </template>
 
 <script lang="ts" setup>
@@ -303,57 +308,25 @@ watch(listId, () => {
 	margin-bottom: 0.5em;
 }
 
-.rangeLabel {
-	font-size: 0.85em;
-	margin-bottom: 0.5em;
-	margin-top: 0;
-}
-
-.rangeButton {
-	background: none;
-	border: none;
-}
-
-.selectLabel {
-	display: block;
-	font-size: 0.9em;
-	font-weight: 600;
-	margin-bottom: 0.5em;
-}
-
 .subtractButton {
-	@media (max-width: 585px) {
-		min-width: 6em;
-		flex: 1;
+	@media (max-width: 600px) {
+		min-width: 12px;
+		padding-left: 8px;
+		padding-right: 8px;
 	}
 }
 
-.subtractButtonWithText {
-	@media (max-width: 585px) {
-		min-width: 6em;
-		flex: 1;
-		font-size: 0.8em;
-	}
-}
-
-.subtractButtonForm {
+.miscFormLeft {
 	display: flex;
+	flex-wrap: wrap;
 	align-items: flex-start;
-	gap: 5px;
-	@media (max-width: 585px) {
-		gap: 1px;
-	}
-
+	gap: 10px;
+	min-width: 0;
 }
 
-.subtractButtonFormRight {
+.calenderForm {
 	display: flex;
-	align-items: flex-start;
-	gap: 5px;
-	margin-left: auto;
-	@media (max-width: 585px) {
-		gap: 1px;
-	}
+	gap: 10px;
+	align-items: start;
 }
-
 </style>
