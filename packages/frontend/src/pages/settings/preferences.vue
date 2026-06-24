@@ -73,13 +73,13 @@ SPDX-License-Identifier: AGPL-3.0-only
 								</MkPreferenceContainer>
 							</SearchMarker>
 
-							<SearchMaker :keywords="['back', 'titlebar']">
+							<SearchMarker :keywords="['back', 'titlebar']">
 								<MkPreferenceContainer k="moveBackButtonToRightSideOfTitlebar">
 									<MkSwitch v-model="moveBackButtonToRightSideOfTitlebar">
 										<template #label><SearchLabel>{{ i18n.ts.moveBackButtonToRightSideOfTitlebar }}</SearchLabel></template>
 									</MkSwitch>
 								</MkPreferenceContainer>
-							</SearchMaker>
+							</SearchMarker>
 
 							<SearchMarker :keywords="['avatar', 'icon', 'decoration', 'show']">
 								<MkPreferenceContainer k="showAvatarDecorations">
