@@ -1491,6 +1491,7 @@ apiDocument: "APIドキュメント"
 nextDay: "翌日"
 previousDay: "前日"
 firstDay: "初日"
+unlimitSubscribeNotes_caption: "この設定がオフになると、古いノートが購読されなくなり、リアクションなどの反映が自動で行われなくなります。"
 
 _order:
   newest: "新しい順"
@@ -1593,6 +1594,7 @@ _settings:
   settingsPersistence_title: "設定の永続化"
   settingsPersistence_description1: "設定の永続化を有効にすると、設定情報が失われるのを防止できます。"
   settingsPersistence_description2: "環境によっては有効化できない場合があります。"
+  unlimitSubscribeNotes: "タイムライン上のノートを全て購読する"
 
   _chat:
     showSenderName: "送信者の名前を表示"

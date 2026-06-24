@@ -5951,6 +5951,10 @@ export interface Locale extends ILocale {
      * 初日
      */
     "firstDay": string;
+    /**
+     * この設定がオフになると、古いノートが購読されなくなり、リアクションなどの反映が自動で行われなくなります。
+     */
+    "unlimitSubscribeNotes_caption": string;
     "_order": {
         /**
          * 新しい順
@@ -6333,6 +6337,10 @@ export interface Locale extends ILocale {
          * 環境によっては有効化できない場合があります。
          */
         "settingsPersistence_description2": string;
+        /**
+         * タイムライン上のノートを全て購読する
+         */
+        "unlimitSubscribeNotes": string;
         "_chat": {
             /**
              * 送信者の名前を表示

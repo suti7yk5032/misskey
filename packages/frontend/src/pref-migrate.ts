@@ -140,6 +140,7 @@ export function migrateOldSettings() {
 		prefer.commit('startupWindowHeight', store.s.startupWindowHeight);
 		prefer.commit('moveBackButtonToRightSideOfTitlebar', store.s.moveBackButtonToRightSideOfTitlebar);
 		prefer.commit('showBackButtonInNavbar', store.s.showBackButtonInNavbar);
+		prefer.commit('unlimitSubscribeNotes', store.s.unlimitSubscribeNotes);
 
 		window.setTimeout(() => {
 			unisonReload();

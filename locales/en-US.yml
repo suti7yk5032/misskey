@@ -1414,6 +1414,7 @@ inputDatetime: "Enter date and time"
 apiDocument: "API documentation"
 nextDay: "Next day"
 previousDay: "Previous day"
+unlimitSubscribeNotes_caption: "When this setting is turned off, older notes will no longer be subscribed to, and automatic updates like reactions will stop being applied."
 
 createUserSpecifiedNote: "Create a direct note"
 schedulePost: "Schedule note"
@@ -1585,6 +1586,7 @@ _settings:
   settingsPersistence_title: "Persistence of Settings"
   settingsPersistence_description1: "Enabling setting persistence prevents configuration information from being lost."
   settingsPersistence_description2: "It may not be possible to enable this depending on the environment."
+  unlimitSubscribeNotes: "Subscribe to all notes on the timeline"
   _chat:
     showSenderName: "Show sender's name"
     sendOnEnter: "Press Enter to send"

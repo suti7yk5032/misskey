@@ -566,4 +566,7 @@ export const PREF_DEF = definePreferences({
 	'autoResizeStartupWindow': {
 		default: true,
 	},
+	'unlimitSubscribeNotes': {
+		default: true,
+	},
 });

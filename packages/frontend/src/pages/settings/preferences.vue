@@ -704,6 +704,18 @@ SPDX-License-Identifier: AGPL-3.0-only
 							</MkPreferenceContainer>
 						</SearchMarker>
 
+						<SearchMarker :keywords="['unlimit', 'subscribe', 'timeline', 'note']">
+							<MkPreferenceContainer k="unlimitSubscribeNotes">
+								<MkSwitch v-model="unlimitSubscribeNotes">
+									<template #label><SearchLabel>{{ i18n.ts._settings.unlimitSubscribeNotes }}</SearchLabel></template>
+									<template #caption>
+										<SearchText>{{ i18n.ts.turnOffToImprovePerformance }}</SearchText>
+										<div>{{ i18n.ts.unlimitSubscribeNotes_caption }}</div>
+									</template>
+								</MkSwitch>
+							</MkPreferenceContainer>
+						</SearchMarker>
+
 						<MkInfo>
 							<div class="_gaps_s">
 								<div>{{ i18n.ts._clientPerformanceIssueTip.title }}:</div>
@@ -1018,6 +1030,7 @@ const moveWidgetsToRightSide = prefer.model('moveWidgetsToRightSide');
 const autoShowReplies = prefer.model('autoShowReplies');
 const moveBackButtonToRightSideOfTitlebar = prefer.model('moveBackButtonToRightSideOfTitlebar');
 const autoResizeStartupWindow = prefer.model('autoResizeStartupWindow');
+const unlimitSubscribeNotes = prefer.model('unlimitSubscribeNotes');
 
 const fontSize = ref(miLocalStorage.getItem('fontSize') as '1' | '2' | '3' | null);
 const useSystemFont = ref(miLocalStorage.getItem('useSystemFont') != null);
@@ -1079,6 +1092,7 @@ watch([
 	animatedMfm,
 	advancedMfm,
 	moveBackButtonToRightSideOfTitlebar,
+	unlimitSubscribeNotes,
 ], () => {
 	suggestReload();
 });
