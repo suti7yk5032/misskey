@@ -21,4 +21,4 @@ else
 fi
 pnpm build
 pnpm migrate
-pnpm exec cypress install
+pnpm --filter frontend exec playwright install --with-deps chromium
