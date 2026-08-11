@@ -11,12 +11,12 @@ import { computed, markRaw, onMounted, onUnmounted, ref, triggerRef } from 'vue'
 import type { MenuItem } from '@/types/menu.js';
 import type { WatermarkLayers, WatermarkPreset } from '@/utility/watermark/WatermarkRenderer.js';
 import type { ImageFrameParams, ImageFramePreset } from '@/utility/image-frame-renderer/ImageFrameRenderer.js';
+import type { Content } from '@/components/MkLightbox.item.vue';
 import { genId } from '@/utility/id.js';
 import { i18n } from '@/i18n.js';
 import { prefer } from '@/preferences.js';
 import { isWebpSupported } from '@/utility/isWebpSupported.js';
 import { uploadFile, UploadAbortedError } from '@/utility/drive.js';
-import type { Content } from '@/components/MkLightbox.item.vue';
 import * as os from '@/os.js';
 import { ensureSignin } from '@/i.js';
 
@@ -89,21 +89,36 @@ export function getUploadName(item: UploaderItem): string {
 	return item.name + (item.name.endsWith(item.suffix) ? '' : item.suffix);
 }
 
-function getCompressionSettings(level: 0 | 1 | 2 | 3) {
+function getCompressionSettings(level: 0 | 1 | 2 | 3, srcWidth: number, srcHeight: number) {
+	const isWebp = isWebpSupported();
 	if (level === 1) {
-		return {
-			maxWidth: 2000,
-			maxHeight: 2000,
-		};
+		if (isWebp) {
+			return {
+				maxWidth: srcWidth,
+				maxHeight: srcHeight,
+			};
+		} else {
+			return {
+				maxWidth: srcWidth * 0.75,
+				maxHeight: srcHeight * 0.75,
+			};
+		}
 	} else if (level === 2) {
-		return {
-			maxWidth: 2000 * 0.75, // =1500
-			maxHeight: 2000 * 0.75, // =1500
-		};
+		if (isWebp) {
+			return {
+				maxWidth: 2000,
+				maxHeight: 2000,
+			};
+		} else {
+			return {
+				maxWidth: 1500,
+				maxHeight: 1500,
+			};
+		}
 	} else if (level === 3) {
 		return {
-			maxWidth: 2000 * 0.75 * 0.75, // =1125
-			maxHeight: 2000 * 0.75 * 0.75, // =1125
+			maxWidth: 1000,
+			maxHeight: 1000,
 		};
 	} else {
 		return null;
@@ -309,7 +324,7 @@ export function useUploader(options: {
 							image: item.file,
 						}, {
 							ok: (file) => {
-									const newObjectUrl = createItemObjectUrl(item, file);
+								const newObjectUrl = createItemObjectUrl(item, file);
 								items.value.splice(items.value.indexOf(item), 1, {
 									...item,
 									file: markRaw(file),
@@ -714,7 +729,7 @@ export function useUploader(options: {
 			});
 		}
 
-		const compressionSettings = getCompressionSettings(item.compressionLevel);
+		const compressionSettings = getCompressionSettings(item.compressionLevel, imageBitmap.width, imageBitmap.height);
 		const needsCompress = item.compressionLevel !== 0 && compressionSettings && IMAGE_EDITING_SUPPORTED_TYPES.includes(preprocessedFile.type) && !(await isAnimated(preprocessedFile));
 
 		if (needsCompress) {
