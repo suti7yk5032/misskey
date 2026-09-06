@@ -36,8 +36,9 @@ coverage
 !/.config/docker_example.env
 !/.config/playwright-devcontainer.yml
 docker-compose.yml
-./compose.yml
-/.devcontainer/devcontainer-lock.json
+/compose.yml
+.devcontainer/compose.yml
+!/.devcontainer/compose.yml
 
 # misskey
 /build
@@ -86,6 +87,7 @@ images/
 # Custom
 /.devcontainer/devcontainer_custom.yml
 /.devcontainer/scripts/
+/.devcontainer/devcontainer-lock.json
 
 # Affinity
 *.af~lock~
