@@ -198,11 +198,11 @@ export function calculateSourceTransform({
 
 <script lang="ts" setup>
 import { computed, nextTick, ref, useTemplateRef, markRaw, watch, provide, onBeforeUnmount, defineAsyncComponent } from 'vue';
-import MkBlurhash from '@/components/MkBlurhash.vue';
 import XControl from './MkLightbox.item.controls.vue';
-import type XAudioVisualizer__TypeReferenceOnly from './MkLightbox.item.audio-visualizer.vue';
 import XFileInfo from './MkLightbox.item.fileinfo.vue';
+import type XAudioVisualizer__TypeReferenceOnly from './MkLightbox.item.audio-visualizer.vue';
 import type { MenuItem } from '@/types/menu.js';
+import MkBlurhash from '@/components/MkBlurhash.vue';
 import { DI } from '@/di.js';
 import * as os from '@/os.js';
 import { prefer } from '@/preferences.js';
@@ -301,7 +301,7 @@ const contentHideFileText = computed(() => {
 const videoAspectRatio = ref<number | null>(
 	props.content.width != null && props.content.height != null && props.content.width > 0 && props.content.height > 0
 		? props.content.width / props.content.height
-		: null
+		: null,
 );
 
 function onVideoLoadedMetadata() {
@@ -561,6 +561,8 @@ let currentPointerStartOffset = { x: 0, y: 0 };
 let isVerticalSwiping = false;
 let isHorizontalSwiping = false;
 let horizontalSwipeDelta = 0;
+let singleTapCloseTimer: number | null = null;
+let touchClicksToIgnore = 0;
 /** 軸が確定した時点のポインタ位置。ここを基準にスワイプ量を測ることで、確定時に描画が飛ぶのを防ぐ */
 let swipeOrigin = { x: 0, y: 0 };
 
@@ -771,6 +773,14 @@ function onPointerup(ev: PointerEvent) {
 
 const doubleTapDetector = makeDoubleTapDetector((ev) => {
 	pointerVec = { x: 0, y: 0 };
+	const touchClickCount = resolveClickAction(ev.target) == null
+		? (singleTapCloseTimer == null ? 2 : 1)
+		: 0;
+	if (singleTapCloseTimer != null) {
+		window.clearTimeout(singleTapCloseTimer);
+		singleTapCloseTimer = null;
+	}
+	touchClicksToIgnore = touchClickCount;
 
 	if (isZooming.value) {
 		isZooming.value = false;
@@ -906,13 +916,28 @@ function onClick(ev: MouseEvent) {
 		return;
 	}
 
-	if (!isTouchUsing) {
+	if (isTouchUsing && touchClicksToIgnore > 0) {
+		touchClicksToIgnore--;
+		return;
+	}
+
+	const closeOrReset = () => {
 		if (isZooming.value) {
 			isZooming.value = false;
 			resetToNeutral();
 		} else {
 			closeThis();
 		}
+	};
+
+	if (isTouchUsing) {
+		// ダブルタップの2回目のtouchstartでズームできるよう、単発タップの確定を待つ
+		singleTapCloseTimer = window.setTimeout(() => {
+			singleTapCloseTimer = null;
+			closeOrReset();
+		}, 190);
+	} else {
+		closeOrReset();
 	}
 }
 
@@ -1020,6 +1045,9 @@ function onDeactive() {
 }
 
 onBeforeUnmount(() => {
+	if (singleTapCloseTimer != null) {
+		window.clearTimeout(singleTapCloseTimer);
+	}
 	if (rafHandle) {
 		window.cancelAnimationFrame(rafHandle);
 	}
