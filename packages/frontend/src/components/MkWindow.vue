@@ -181,10 +181,10 @@ function maximize() {
 	unResizedLeft = rootEl.value.style.left;
 	unResizedWidth = rootEl.value.style.width;
 	unResizedHeight = rootEl.value.style.height;
-	rootEl.value.style.top = '0';
+	rootEl.value.style.top = 'env(titlebar-area-height, 0px)';
 	rootEl.value.style.left = '0';
 	rootEl.value.style.width = '100%';
-	rootEl.value.style.height = '100%';
+	rootEl.value.style.height = 'calc(100% - env(titlebar-area-height, 0px))';
 }
 
 function unMaximize() {

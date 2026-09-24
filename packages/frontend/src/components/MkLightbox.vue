@@ -261,10 +261,10 @@ defineExpose({
 
 .root {
 	position: fixed;
-	top: 0;
+	top: env(titlebar-area-height, 0px);
 	left: 0;
 	width: 100%;
-	height: 100%;
+	height: calc(100% - env(titlebar-area-height, 0px));
 }
 
 .bg {
@@ -280,7 +280,7 @@ defineExpose({
 	position: absolute;
 	display: flex;
 	width: calc(v-bind("screenWidth + 'px'") * v-bind("contents.length"));
-	height: 100dvh;
+	height: 100%;
 	overflow: clip;
 	contain: strict;
 }
@@ -292,7 +292,7 @@ defineExpose({
 
 .item {
 	width: 100dvw;
-	height: 100dvh;
+	height: 100%;
 	overflow: clip;
 	contain: strict;
 	flex-shrink: 0;
