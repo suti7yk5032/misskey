@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <MkModalWindow
 	ref="dialogEl"
 	:withOkButton="true"
-	:okButtonDisabled="selected == null"
+	:okButtonDisabled="tab === 'user' ? selected == null : selectedList == null"
 	@click="cancel()"
 	@close="cancel()"
 	@ok="ok()"
@@ -15,44 +15,73 @@ SPDX-License-Identifier: AGPL-3.0-only
 >
 	<template #header>{{ i18n.ts.selectUser }}</template>
 	<div>
-		<div :class="$style.form">
-			<MkInput v-if="computedLocalOnly" v-model="username" :autofocus="true" @update:modelValue="search">
-				<template #label>{{ i18n.ts.username }}</template>
-				<template #prefix>@</template>
-			</MkInput>
-			<FormSplit v-else :minWidth="170">
-				<MkInput v-model="username" :autofocus="true" @update:modelValue="search">
+		<MkTabs
+			v-if="props.includeUserLists"
+			v-model:tab="tab"
+			:tabs="[
+				{ key: 'user', title: i18n.ts.user, icon: 'ti ti-user' },
+				{ key: 'list', title: i18n.ts.userList, icon: 'ti ti-list' },
+			]"
+		/>
+		<div v-if="tab === 'user'">
+			<div :class="$style.form">
+				<MkInput v-if="computedLocalOnly" v-model="username" :autofocus="true" @update:modelValue="search">
 					<template #label>{{ i18n.ts.username }}</template>
 					<template #prefix>@</template>
 				</MkInput>
-				<MkInput v-model="host" :datalist="[hostname]" @update:modelValue="search">
-					<template #label>{{ i18n.ts.host }}</template>
-					<template #prefix>@</template>
-				</MkInput>
-			</FormSplit>
-		</div>
-		<div v-if="username != '' || host != ''" :class="[$style.result, { [$style.hit]: users.length > 0 }]">
-			<div v-if="users.length > 0" :class="$style.users">
-				<div v-for="user in users" :key="user.id" class="_button" :class="[$style.user, { [$style.selected]: selected && selected.id === user.id }]" @click="selected = user" @dblclick="ok()">
-					<MkAvatar :user="user" :class="$style.avatar" indicator/>
-					<div :class="$style.userBody">
-						<MkUserName :user="user" :class="$style.userName"/>
-						<MkAcct :user="user" :class="$style.userAcct"/>
+				<FormSplit v-else :minWidth="170">
+					<MkInput v-model="username" :autofocus="true" @update:modelValue="search">
+						<template #label>{{ i18n.ts.username }}</template>
+						<template #prefix>@</template>
+					</MkInput>
+					<MkInput v-model="host" :datalist="[hostname]" @update:modelValue="search">
+						<template #label>{{ i18n.ts.host }}</template>
+						<template #prefix>@</template>
+					</MkInput>
+				</FormSplit>
+			</div>
+			<div v-if="username != '' || host != ''" :class="[$style.result, { [$style.hit]: users.length > 0 }]">
+				<div v-if="users.length > 0" :class="$style.users">
+					<div v-for="user in users" :key="user.id" class="_button" :class="[$style.user, { [$style.selected]: selected && selected.id === user.id }]" @click="selected = user" @dblclick="ok()">
+						<MkAvatar :user="user" :class="$style.avatar" indicator/>
+						<div :class="$style.userBody">
+							<MkUserName :user="user" :class="$style.userName"/>
+							<MkAcct :user="user" :class="$style.userAcct"/>
+						</div>
+					</div>
+				</div>
+				<div v-else :class="$style.empty">
+					<span>{{ i18n.ts.noUsers }}</span>
+				</div>
+			</div>
+			<div v-if="username == '' && host == ''" :class="$style.recent">
+				<div :class="$style.users">
+					<div v-for="user in recentUsers" :key="user.id" class="_button" :class="[$style.user, { [$style.selected]: selected && selected.id === user.id }]" @click="selected = user" @dblclick="ok()">
+						<MkAvatar :user="user" :class="$style.avatar" indicator/>
+						<div :class="$style.userBody">
+							<MkUserName :user="user" :class="$style.userName"/>
+							<MkAcct :user="user" :class="$style.userAcct"/>
+						</div>
 					</div>
 				</div>
 			</div>
-			<div v-else :class="$style.empty">
-				<span>{{ i18n.ts.noUsers }}</span>
-			</div>
 		</div>
-		<div v-if="username == '' && host == ''" :class="$style.recent">
-			<div :class="$style.users">
-				<div v-for="user in recentUsers" :key="user.id" class="_button" :class="[$style.user, { [$style.selected]: selected && selected.id === user.id }]" @click="selected = user" @dblclick="ok()">
-					<MkAvatar :user="user" :class="$style.avatar" indicator/>
-					<div :class="$style.userBody">
-						<MkUserName :user="user" :class="$style.userName"/>
-						<MkAcct :user="user" :class="$style.userAcct"/>
-					</div>
+		<div v-else :class="$style.lists">
+			<div
+				v-for="list in userLists"
+				:key="list.id"
+				class="_button"
+				role="button"
+				tabindex="0"
+				:class="[$style.list, { [$style.selected]: selectedList?.id === list.id }]"
+				@click="selectedList = list"
+				@dblclick="ok()"
+				@keydown.enter="selectedList = list"
+				@keydown.space.prevent="selectedList = list"
+			>
+				<div :class="$style.listName">{{ list.name }}</div>
+				<div :class="$style.listUsers">
+					<MkAcct v-for="user in list.users" :key="user.id" :user="user" :class="$style.listUser"/>
 				</div>
 			</div>
 		</div>
@@ -63,10 +92,11 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import { onMounted, ref, computed, useTemplateRef } from 'vue';
 import * as Misskey from 'misskey-js';
-import { host as currentHost, hostname } from '@@/js/config.js';
+import { hostname } from '@@/js/config.js';
 import MkInput from '@/components/MkInput.vue';
 import FormSplit from '@/components/form/split.vue';
 import MkModalWindow from '@/components/MkModalWindow.vue';
+import MkTabs from '@/components/MkTabs.vue';
 import { misskeyApi } from '@/utility/misskey-api.js';
 import { store } from '@/store.js';
 import { i18n } from '@/i18n.js';
@@ -74,7 +104,7 @@ import { $i } from '@/i.js';
 import { instance } from '@/instance.js';
 
 const emit = defineEmits<{
-	(ev: 'ok', selected: Misskey.entities.UserDetailed): void;
+	(ev: 'ok', selected: Misskey.entities.UserDetailed | string[]): void;
 	(ev: 'cancel'): void;
 	(ev: 'closed'): void;
 }>();
@@ -82,9 +112,11 @@ const emit = defineEmits<{
 const props = withDefaults(defineProps<{
 	includeSelf?: boolean;
 	localOnly?: boolean;
+	includeUserLists?: boolean;
 }>(), {
 	includeSelf: false,
 	localOnly: false,
+	includeUserLists: false,
 });
 
 const computedLocalOnly = computed(() => props.localOnly || instance.federation === 'none');
@@ -94,6 +126,9 @@ const host = ref('');
 const users = ref<Misskey.entities.UserLite[]>([]);
 const recentUsers = ref<Misskey.entities.UserDetailed[]>([]);
 const selected = ref<Misskey.entities.UserLite | null>(null);
+const selectedList = ref<(Misskey.entities.UserList & { users: Misskey.entities.UserDetailed[] }) | null>(null);
+const userLists = ref<(Misskey.entities.UserList & { users: Misskey.entities.UserDetailed[] })[]>([]);
+const tab = ref<'user' | 'list'>('user');
 const dialogEl = useTemplateRef('dialogEl');
 
 function search() {
@@ -118,6 +153,13 @@ function search() {
 }
 
 async function ok() {
+	if (tab.value === 'list') {
+		if (selectedList.value == null) return;
+		emit('ok', selectedList.value.users.map(user => Misskey.acct.toString(user)));
+		dialogEl.value?.close();
+		return;
+	}
+
 	if (selected.value == null) return;
 
 	const user = await misskeyApi('users/show', {
@@ -140,6 +182,17 @@ function cancel() {
 }
 
 onMounted(() => {
+	if (props.includeUserLists) {
+		misskeyApi('users/lists/list').then(lists => {
+			Promise.all(lists.map(async list => ({
+				...list,
+				users: await misskeyApi('users/show', { userIds: list.userIds ?? [] }),
+			}))).then(listsWithUsers => {
+				userLists.value = listsWithUsers;
+			});
+		});
+	}
+
 	misskeyApi('users/show', {
 		userIds: store.s.recentlyUsedUsers,
 	}).then(foundUsers => {
@@ -230,5 +283,41 @@ onMounted(() => {
 	opacity: 0.7;
 	text-align: center;
 	padding: 16px;
+}
+
+.lists {
+	display: flex;
+	flex-direction: column;
+	overflow: auto;
+	height: 100%;
+	padding: 8px 0;
+}
+
+.list {
+	padding: 12px var(--root-margin);
+
+	&:hover {
+		background: color-mix(in srgb, var(--MI_THEME-panel), var(--MI_THEME-fg) 5%);
+	}
+
+	&.selected {
+		background: var(--MI_THEME-accent);
+		color: var(--MI_THEME-fgOnAccent);
+	}
+}
+
+.listName {
+	font-weight: bold;
+}
+
+.listUsers {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0 12px;
+	opacity: 0.7;
+}
+
+.listUser {
+	font-size: 14px;
 }
 </style>

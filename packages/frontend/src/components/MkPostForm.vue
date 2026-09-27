@@ -1166,9 +1166,12 @@ function cancel() {
 }
 
 function insertMention() {
-	os.selectUser({ localOnly: localOnly.value, includeSelf: true }).then(user => {
+	os.selectUser({ localOnly: localOnly.value, includeSelf: true, includeUserLists: true }).then(user => {
 		if (textareaEl.value == null) return;
-		insertTextAtCursor(textareaEl.value, '@' + Misskey.acct.toString(user) + ' ');
+		const mentions = Array.isArray(user)
+			? user.map(acct => `@${acct}`).join(' ')
+			: `@${Misskey.acct.toString(user)}`;
+		insertTextAtCursor(textareaEl.value, mentions + ' ');
 	});
 }
 
