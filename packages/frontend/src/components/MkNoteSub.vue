@@ -22,6 +22,14 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<MkSubNoteContent :class="$style.text" :note="note"/>
 				</div>
 			</div>
+			<MkReactionsViewer
+				v-if="$note != null && note.reactionAcceptance !== 'likeOnly'"
+				style="margin-top: 6px;"
+				:reactions="$note.reactions"
+				:reactionEmojis="$note.reactionEmojis"
+				:myReaction="$note.myReaction"
+				:noteId="note.id"
+			/>
 		</div>
 	</div>
 	<template v-if="depth < 5">
@@ -48,12 +56,14 @@ import * as Misskey from 'misskey-js';
 import MkNoteHeader from '@/components/MkNoteHeader.vue';
 import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
 import MkCwButton from '@/components/MkCwButton.vue';
+import MkReactionsViewer from '@/components/MkReactionsViewer.vue';
 import { notePage } from '@/filters/note.js';
 import { misskeyApi } from '@/utility/misskey-api.js';
 import { i18n } from '@/i18n.js';
 import { $i } from '@/i.js';
 import { userPage } from '@/filters/user.js';
 import { checkWordMute } from '@/utility/check-word-mute.js';
+import { useNoteCapture } from '@/composables/use-note-capture.js';
 
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note | null;
@@ -69,6 +79,14 @@ const muted = ref(props.note && $i ? checkWordMute(props.note, $i, $i.mutedWords
 
 const showContent = ref(false);
 const replies = ref<Misskey.entities.Note[]>([]);
+
+// detail指定時(ノート詳細ページの返信として表示される場合)はリアクションも表示・購読する
+const { $note } = props.detail && props.note != null
+	? useNoteCapture({
+		note: props.note,
+		parentNote: null,
+	})
+	: { $note: null };
 
 if (props.detail && props.note) {
 	misskeyApi('notes/children', {
