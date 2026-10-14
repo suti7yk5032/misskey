@@ -23,13 +23,45 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</div>
 			</div>
 			<MkReactionsViewer
-				v-if="$note != null && note.reactionAcceptance !== 'likeOnly'"
+				v-if="noteActions != null && noteActions.appearNote.reactionAcceptance !== 'likeOnly'"
 				style="margin-top: 6px;"
-				:reactions="$note.reactions"
-				:reactionEmojis="$note.reactionEmojis"
-				:myReaction="$note.myReaction"
-				:noteId="note.id"
+				:reactions="noteActions.$appearNote.reactions"
+				:reactionEmojis="noteActions.$appearNote.reactionEmojis"
+				:myReaction="noteActions.$appearNote.myReaction"
+				:noteId="noteActions.appearNote.id"
 			/>
+			<footer v-if="noteActions != null">
+				<button class="_button" :class="$style.footerButton" @click="noteActions.reply()">
+					<i class="ti ti-arrow-back-up"></i>
+					<p v-if="noteActions.appearNote.repliesCount > 0" :class="$style.footerButtonCount">{{ number(noteActions.appearNote.repliesCount) }}</p>
+				</button>
+				<button
+					v-if="noteActions.canRenote"
+					ref="renoteButton"
+					class="_button"
+					:class="$style.footerButton"
+					@mousedown.prevent="noteActions.renote()"
+				>
+					<i class="ti ti-repeat"></i>
+					<p v-if="noteActions.appearNote.renoteCount > 0" :class="$style.footerButtonCount">{{ number(noteActions.appearNote.renoteCount) }}</p>
+				</button>
+				<button v-else class="_button" :class="$style.footerButton" disabled>
+					<i class="ti ti-ban"></i>
+				</button>
+				<button ref="reactButton" :class="$style.footerButton" class="_button" @click="noteActions.toggleReact()">
+					<i v-if="noteActions.appearNote.reactionAcceptance === 'likeOnly' && noteActions.$appearNote.myReaction != null" class="ti ti-heart-filled" style="color: var(--MI_THEME-love);"></i>
+					<i v-else-if="noteActions.$appearNote.myReaction != null" class="ti ti-minus" style="color: var(--MI_THEME-accent);"></i>
+					<i v-else-if="noteActions.appearNote.reactionAcceptance === 'likeOnly'" class="ti ti-heart"></i>
+					<i v-else class="ti ti-plus"></i>
+					<p v-if="(noteActions.appearNote.reactionAcceptance === 'likeOnly' || prefer.s.showReactionsCount) && noteActions.$appearNote.reactionCount > 0" :class="$style.footerButtonCount">{{ number(noteActions.$appearNote.reactionCount) }}</p>
+				</button>
+				<button v-if="prefer.s.showClipButtonInNoteFooter" ref="clipButton" class="_button" :class="$style.footerButton" @mousedown.prevent="noteActions.clip()">
+					<i class="ti ti-paperclip"></i>
+				</button>
+				<button ref="menuButton" class="_button" :class="$style.footerButton" @mousedown.prevent="noteActions.showMenu()">
+					<i class="ti ti-dots"></i>
+				</button>
+			</footer>
 		</div>
 	</div>
 	<template v-if="depth < 5">
@@ -51,7 +83,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 </template>
 
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, useTemplateRef } from 'vue';
 import * as Misskey from 'misskey-js';
 import MkNoteHeader from '@/components/MkNoteHeader.vue';
 import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
@@ -63,7 +95,9 @@ import { i18n } from '@/i18n.js';
 import { $i } from '@/i.js';
 import { userPage } from '@/filters/user.js';
 import { checkWordMute } from '@/utility/check-word-mute.js';
-import { useNoteCapture } from '@/composables/use-note-capture.js';
+import { useNote } from '@/composables/use-note.js';
+import { prefer } from '@/preferences.js';
+import number from '@/filters/number.js';
 
 const props = withDefaults(defineProps<{
 	note: Misskey.entities.Note | null;
@@ -80,13 +114,21 @@ const muted = ref(props.note && $i ? checkWordMute(props.note, $i, $i.mutedWords
 const showContent = ref(false);
 const replies = ref<Misskey.entities.Note[]>([]);
 
-// detail指定時(ノート詳細ページの返信として表示される場合)はリアクションも表示・購読する
-const { $note } = props.detail && props.note != null
-	? useNoteCapture({
-		note: props.note,
-		parentNote: null,
+// Template Refsの定義
+const menuButton = useTemplateRef('menuButton');
+const renoteButton = useTemplateRef('renoteButton');
+const reactButton = useTemplateRef('reactButton');
+const clipButton = useTemplateRef('clipButton');
+
+// detail指定時(ノート詳細ページの返信として表示される場合)はリアクションの表示・操作ボタンも有効にする
+const noteActions = props.detail && props.note != null
+	? useNote({ note: props.note }, {
+		menuButton,
+		renoteButton,
+		reactButton,
+		clipButton,
 	})
-	: { $note: null };
+	: null;
 
 if (props.detail && props.note) {
 	misskeyApi('notes/children', {
@@ -153,6 +195,25 @@ if (props.detail && props.note) {
 .text {
 	margin: 0;
 	padding: 0;
+}
+
+.footerButton {
+	margin: 0;
+	padding: 8px;
+	color: color-mix(in srgb, var(--MI_THEME-panel), var(--MI_THEME-fg) 70%); // opacityなど不透明度で表現するとレンダリングパフォーマンスに影響するので通常の色の混合で代用
+
+	&:not(:last-child) {
+		margin-right: 16px;
+	}
+
+	&:hover {
+		color: var(--MI_THEME-fgHighlighted);
+	}
+}
+
+.footerButtonCount {
+	display: inline;
+	margin: 0 0 0 8px;
 }
 
 .reply, .more {
