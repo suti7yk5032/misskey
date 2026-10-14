@@ -1413,6 +1413,7 @@ async function insertDatetime() {
 		title: i18n.ts.inputDatetime,
 	});
 	if (canceled) return;
+	if (!textareaEl.value) return;
 	insertTextAtCursor(textareaEl.value, '$[unixtime ' + Math.floor(result.getTime() / 1000) + ']');
 }
 
