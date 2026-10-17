@@ -1,4 +1,4 @@
-name: Publish Docker image (develop)
+name: Publish Docker image (main)
 
 on:
   push:
@@ -9,6 +9,10 @@ on:
 env:
   REGISTRY: ghcr.io
   REGISTRY_IMAGE: ghcr.io/suti7yk5032/misskey
+
+permissions:
+  contents: read
+  packages: write
 
 jobs:
   # see https://docs.docker.com/build/ci/github-actions/multi-platform/#distribute-build-across-multiple-runners
@@ -44,7 +48,6 @@ jobs:
           push: true
           platforms: ${{ matrix.platform }}
           provenance: false
-          labels: main
           cache-from: type=gha
           cache-to: type=gha,mode=max
           outputs: type=image,name=${{ env.REGISTRY_IMAGE }},push-by-digest=true,name-canonical=true,push=true
