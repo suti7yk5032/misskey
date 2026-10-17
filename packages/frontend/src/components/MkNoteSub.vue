@@ -85,15 +85,15 @@ SPDX-License-Identifier: AGPL-3.0-only
 <script lang="ts" setup>
 import { ref, useTemplateRef } from 'vue';
 import * as Misskey from 'misskey-js';
+import { notePage } from '@@/js/note.js';
+import { userPage } from '@@/js/user.js';
 import MkNoteHeader from '@/components/MkNoteHeader.vue';
 import MkSubNoteContent from '@/components/MkSubNoteContent.vue';
 import MkCwButton from '@/components/MkCwButton.vue';
 import MkReactionsViewer from '@/components/MkReactionsViewer.vue';
-import { notePage } from '@/filters/note.js';
 import { misskeyApi } from '@/utility/misskey-api.js';
 import { i18n } from '@/i18n.js';
 import { $i } from '@/i.js';
-import { userPage } from '@/filters/user.js';
 import { checkWordMute } from '@/utility/check-word-mute.js';
 import { useNote } from '@/composables/use-note.js';
 import { prefer } from '@/preferences.js';
