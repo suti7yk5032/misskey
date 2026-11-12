@@ -12,6 +12,7 @@ fi
 
 git config --global --add safe.directory /workspace
 git submodule update --init
+sudo env "PATH=$PATH" npm install -g "$(node -p "require('./package.json').packageManager")"
 pnpm config set store-dir /home/node/.local/share/pnpm/store
 pnpm install --frozen-lockfile
 if [ -f ".devcontainer/devcontainer_custom.yml" ]; then

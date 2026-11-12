@@ -6366,6 +6366,10 @@ export interface Locale extends ILocale {
          * タイムライン上のノートを全て購読する
          */
         "unlimitSubscribeNotes": string;
+        /**
+         * URLプレビューの埋め込みプレイヤーを自動再生
+         */
+        "autoplayEmbededPlayerOfUrlPreview": string;
         "_chat": {
             /**
              * 送信者の名前を表示
