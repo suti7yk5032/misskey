@@ -13597,4 +13597,130 @@ export interface Locale extends ILocale {
          */
         "mfm": string;
     };
+    "_reactionReport": {
+        /**
+         * リアクション帳票
+         */
+        "title": string;
+        /**
+         * 自分のリアクションを絵文字ごとに集計して、付けたノートを確認できます。集計対象は自分以外のユーザーやリストからも選べます。
+         */
+        "description": string;
+        /**
+         * 集計するユーザー
+         */
+        "targets": string;
+        /**
+         * 自分
+         */
+        "self": string;
+        /**
+         * ユーザー名で追加
+         */
+        "addUser": string;
+        /**
+         * 追加
+         */
+        "add": string;
+        /**
+         * リストから追加
+         */
+        "fromLists": string;
+        /**
+         * リストがありません
+         */
+        "noLists": string;
+        /**
+         * 全員を追加
+         */
+        "addAll": string;
+        /**
+         * 全員を外す
+         */
+        "removeAll": string;
+        /**
+         * 1人以上選んでください。
+         */
+        "selectAtLeastOne": string;
+        /**
+         * 集計する
+         */
+        "run": string;
+        /**
+         * 集計しています…
+         */
+        "running": string;
+        /**
+         * {current}/{total}人目
+         */
+        "progress": ParameterizedString<"current" | "total">;
+        /**
+         * {n}件
+         */
+        "fetched": ParameterizedString<"n">;
+        /**
+         * リアクション
+         */
+        "reactionCount": string;
+        /**
+         * 絵文字の種類
+         */
+        "emojiCount": string;
+        /**
+         * 対象ユーザー
+         */
+        "userCount": string;
+        /**
+         * 絵文字別のリアクション数
+         */
+        "byEmoji": string;
+        /**
+         * リアクションがありません。
+         */
+        "noReactions": string;
+        /**
+         * 上位{shown}件を表示（全{total}種類）
+         */
+        "showingTop": ParameterizedString<"shown" | "total">;
+        /**
+         * ユーザー別の内訳
+         */
+        "byUser": string;
+        /**
+         * 一覧へ戻る
+         */
+        "back": string;
+        /**
+         * 回
+         */
+        "reactionsSuffix": string;
+        /**
+         * ノート{n}件
+         */
+        "notesCount": ParameterizedString<"n">;
+        /**
+         * この絵文字が付いたノートは取得できませんでした。
+         */
+        "noNotes": string;
+        /**
+         * リアクションした人
+         */
+        "reactedBy": string;
+        /**
+         * ユーザーを選び直す
+         */
+        "reselect": string;
+        /**
+         * このユーザーを外す
+         */
+        "removeUser": string;
+        /**
+         * {names} が見つかりませんでした。
+         */
+        "userNotFound": ParameterizedString<"names">;
+    };
+    /**
+     * リサーチ
+     */
+    "research": string;
 }

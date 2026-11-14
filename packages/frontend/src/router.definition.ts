@@ -609,6 +609,14 @@ export const ROUTE_DEF = [{
 	component: page(() => import('@/pages/recall.vue')),
 	loginRequired: true,
 }, {
+	path: '/research',
+	component: page(() => import('@/pages/research.vue')),
+	loginRequired: true,
+}, {
+	path: '/reaction-report',
+	redirect: '/research',
+	loginRequired: true,
+}, {
 	// テスト用リダイレクト設定。ログイン中ユーザのプロフィールにリダイレクトする
 	path: '/redirect-test',
 	redirect: $i ? `@${$i.username}` : '/',

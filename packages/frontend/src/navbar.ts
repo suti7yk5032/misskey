@@ -215,6 +215,11 @@ export const navbarItemDef = reactive<{
 			window.history.back();
 		},
 	},
+	research: {
+		title: i18n.ts.research,
+		icon: 'ti ti-flask',
+		to: '/research',
+	},
 });
 
 if (iAmAdmin || $i?.policies.canManageCustomEmojis) {
