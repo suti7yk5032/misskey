@@ -91,3 +91,6 @@ images/
 
 # Affinity
 *.af~lock~
+
+# git
+*.diff
