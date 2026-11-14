@@ -66,6 +66,20 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<MkButton primary large :disabled="targets.length === 0" @click="run">
 				<i class="ti ti-chart-bar"></i> {{ i18n.ts._reactionReport.run }}
 			</MkButton>
+
+			<div v-if="summaries.length > 0" class="_panel" :class="$style.block">
+				<div :class="$style.sectionTitle">{{ i18n.ts._reactionReport.cacheTitle }}</div>
+				<div v-for="s in summaries" :key="s.id" :class="$style.cacheRow">
+					<div :class="$style.cacheInfo">
+						<b>{{ formatSavedAt(s.savedAt) }}</b>
+						<span :class="$style.hint">
+							{{ i18n.tsx._reactionReport.cacheMeta({ users: s.targets.length, reactions: s.reactionCount }) }}
+						</span>
+					</div>
+					<MkButton small @click="openCached(s)"><i class="ti ti-folder-open"></i> {{ i18n.ts._reactionReport.cacheOpen }}</MkButton>
+					<MkButton small danger :title="i18n.ts._reactionReport.cacheDelete" @click="removeCached(s)"><i class="ti ti-trash"></i></MkButton>
+				</div>
+			</div>
 		</template>
 
 		<!-- 2. 実行中 -->
@@ -98,6 +112,12 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</MkButton>
 			</div>
 
+			<div v-if="cachedAt != null" :class="$style.cacheBanner">
+				<i class="ti ti-database"></i>
+				{{ i18n.tsx._reactionReport.cacheViewing({ date: formatSavedAt(cachedAt) }) }}
+			</div>
+			<div v-else-if="cacheNotice != null" :class="$style.hint">{{ cacheNotice }}</div>
+
 			<div :class="$style.kpis">
 				<div class="_panel" :class="$style.kpi">
 					<span :class="$style.kpiLabel">{{ i18n.ts._reactionReport.reactionCount }}</span>
@@ -114,33 +134,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 			</div>
 
 			<div class="_panel" :class="$style.block">
-				<div :class="$style.sectionTitle">{{ i18n.ts._reactionReport.byEmoji }}</div>
-				<div v-if="stats.emojis.length === 0" :class="$style.hint">{{ i18n.ts._reactionReport.noReactions }}</div>
-				<div v-else :class="$style.chart">
-					<div v-for="(emoji, index) in shownEmojis" :key="emoji.type" :class="$style.row" @click="openEmoji(emoji)">
-						<span :class="$style.icon">
-							<MkReactionIcon :reaction="emoji.type" :noStyle="true"/>
-						</span>
-						<span :class="$style.label">{{ emoji.kind === 'custom' ? reactionLabel(emoji.type) : '' }}</span>
-						<span :class="$style.track">
-							<span :class="$style.fill" :style="{ width: barWidth(emoji.count) }">
-								<span
-									v-for="(n, username) in sortedByUser(emoji)" :key="username" :class="$style.seg"
-									:style="{ width: `${(n / Math.max(emoji.count, 1)) * 100}%`, background: colorOf(username) }"
-									:title="`@${username}: ${n}`"
-								></span>
-							</span>
-						</span>
-						<span :class="$style.count">{{ emoji.count.toLocaleString() }}<span :class="$style.pct">{{
-							pct(emoji.count) }}</span></span>
-					</div>
-				</div>
-				<div v-if="stats.emojis.length > shownEmojis.length" :class="$style.hint" style="margin-top: 8px;">
-					{{ i18n.tsx._reactionReport.showingTop({ shown: shownEmojis.length, total: stats.emojis.length }) }}
-				</div>
-			</div>
-
-			<div class="_panel" :class="$style.block">
 				<div :class="$style.sectionTitle">{{ i18n.ts._reactionReport.byUser }}</div>
 				<div :class="$style.chips">
 					<span v-for="u in stats.users" :key="u.id" :class="$style.chip">
@@ -148,6 +141,34 @@ SPDX-License-Identifier: AGPL-3.0-only
 						<span>{{ u.name }}</span>
 						<b>{{ u.count.toLocaleString() }}</b>
 					</span>
+				</div>
+			</div>
+
+			<div class="_panel" :class="$style.block">
+				<div :class="$style.sectionTitle">{{ i18n.ts._reactionReport.byEmoji }}</div>
+				<div v-if="stats.emojis.length === 0" :class="$style.hint">{{ i18n.ts._reactionReport.noReactions }}</div>
+				<div v-else :class="$style.chart">
+					<div v-for="emoji in shownEmojis" :key="emoji.type" :class="$style.row" @click="openEmoji(emoji)">
+						<div :class="$style.rowEmoji">
+							<MkReactionIcon :reaction="emoji.type" />
+						</div>
+						<div :class="$style.rowBar">
+							<span :class="$style.track">
+								<span :class="$style.fill" :style="{ width: barWidth(emoji.count) }">
+									<span
+										v-for="(n, username) in sortedByUser(emoji)" :key="username" :class="$style.seg"
+										:style="{ width: `${(n / Math.max(emoji.count, 1)) * 100}%`, background: colorOf(username) }"
+										:title="`@${username}: ${n}`"
+									></span>
+								</span>
+							</span>
+							<span :class="$style.count">{{ emoji.count.toLocaleString() }}<span :class="$style.pct">{{
+								pct(emoji.count) }}</span></span>
+						</div>
+					</div>
+				</div>
+				<div v-if="stats.emojis.length > shownEmojis.length" :class="$style.hint" style="margin-top: 8px;">
+					{{ i18n.tsx._reactionReport.showingTop({ shown: shownEmojis.length, total: stats.emojis.length }) }}
 				</div>
 			</div>
 		</template>
@@ -158,10 +179,10 @@ SPDX-License-Identifier: AGPL-3.0-only
 
 			<div class="_panel" :class="$style.block">
 				<div :class="$style.detailHead">
-					<span :class="$style.detailIcon">
-						<MkReactionIcon :reaction="selectedEmoji.type" :noStyle="true"/>
-					</span>
-					<div>
+					<div :class="$style.detailEmoji">
+						<MkReactionIcon :reaction="selectedEmoji.type" />
+					</div>
+					<div :class="$style.detailMeta">
 						<b>{{ reactionLabel(selectedEmoji.type) }}</b>
 						<div :class="$style.hint">
 							{{ selectedEmoji.count.toLocaleString() }}{{ i18n.ts._reactionReport.reactionsSuffix }} ·
@@ -209,6 +230,9 @@ import { i18n } from '@/i18n.js';
 import { ensureSignin } from '@/i.js';
 import { aggregate } from '@/scripts/reaction-report/aggregate.js';
 import { reactionLabel } from '@/scripts/reaction-report/emoji-type.js';
+import { buildSnapshot, reportKey, toSummary, MAX_NOTES_PER_EMOJI } from '@/scripts/reaction-report/snapshot.js';
+import type { NoteListEntry, ReportSummary } from '@/scripts/reaction-report/snapshot.js';
+import { deleteReport, getReport, listReports, saveReport } from '@/scripts/reaction-report/cache.js';
 
 const $i = ensureSignin();
 
@@ -222,15 +246,9 @@ interface CollectedReaction {
 	note: Misskey.entities.Note | null;
 }
 
-interface NoteListEntry {
-	note: Misskey.entities.Note;
-	reactors: { username: string; createdAt: string }[];
-	lastReactedAt: string;
-}
-
 const PAGE_SIZE = 100;
 const MAX_ROWS = 100;
-const MAX_NOTES = 30;
+const MAX_NOTES = MAX_NOTES_PER_EMOJI;
 
 const view = ref<View>('setup');
 const targets = ref<TargetUser[]>([{
@@ -251,6 +269,13 @@ const stats = ref<ReportStats | null>(null);
 const instanceName = ref<string | null>(null);
 const selectedEmoji = ref<EmojiStat | null>(null);
 
+// ブラウザ内キャッシュ
+const summaries = ref<ReportSummary[]>([]);
+const cachedNotes = ref<Record<string, NoteListEntry[]> | null>(null);
+const cachedTotals = ref<Record<string, number> | null>(null);
+const cachedAt = ref<string | null>(null);
+const cacheNotice = ref<string | null>(null);
+
 let controller: AbortController | null = null;
 
 const usernameById = computed(() => new Map(targets.value.map((u) => [u.id, u.username])));
@@ -270,6 +295,12 @@ const detailUsers = computed(() => {
 const detailNotes = computed<{ total: number; notes: NoteListEntry[] }>(() => {
 	const emoji = selectedEmoji.value;
 	if (!emoji) return { total: 0, notes: [] };
+
+	// キャッシュから開いた場合は保存済みのノートを使う
+	if (cachedNotes.value != null) {
+		const notes = cachedNotes.value[emoji.type] ?? [];
+		return { total: cachedTotals.value?.[emoji.type] ?? notes.length, notes };
+	}
 
 	const map = new Map<string, NoteListEntry>();
 	for (const r of collected.value) {
@@ -422,6 +453,22 @@ async function run(): Promise<void> {
 		});
 		view.value = 'result';
 		window.document.title = `${i18n.ts._reactionReport.title} | ${instanceName.value ?? window.location.host}`;
+
+		// ブラウザ内キャッシュに保存（次回以降ここから見返せる）
+		cachedNotes.value = null;
+		cachedTotals.value = null;
+		cachedAt.value = null;
+		const snapshot = buildSnapshot({
+			origin: window.location.host,
+			instanceName: instanceName.value,
+			targets: targets.value,
+			stats: stats.value,
+			reactions: rows,
+			usernameById: usernameById.value,
+		});
+		const saved = await saveReport(snapshot, toSummary(snapshot));
+		cacheNotice.value = saved ? i18n.ts._reactionReport.cacheSaved : i18n.ts._reactionReport.cacheSaveFailed;
+		await refreshSummaries();
 	} catch (err) {
 		if (ac.signal.aborted) return;
 		errorText.value = err instanceof Error ? err.message : String(err);
@@ -459,11 +506,67 @@ function pct(count: number): string {
 	return v > 0 && v < 0.1 ? '<0.1%' : `${v.toFixed(1)}%`;
 }
 
+async function refreshSummaries(): Promise<void> {
+	summaries.value = await listReports();
+}
+
+/** 保存済みの集計を開く（API は叩かない） */
+async function openCached(summary: ReportSummary): Promise<void> {
+	const snapshot = await getReport(summary.id);
+	if (snapshot == null) {
+		await refreshSummaries();
+		return;
+	}
+
+	stats.value = snapshot.stats;
+	instanceName.value = snapshot.instanceName;
+	targets.value = snapshot.targets;
+	cachedNotes.value = snapshot.notes;
+	cachedTotals.value = snapshot.noteTotals;
+	cachedAt.value = snapshot.savedAt;
+	cacheNotice.value = null;
+	collected.value = [];
+	errorText.value = null;
+	view.value = 'result';
+	window.scrollTo({ top: 0 });
+}
+
+async function removeCached(summary: ReportSummary): Promise<void> {
+	const confirm = await os.confirm({
+		type: 'warning',
+		text: i18n.ts._reactionReport.cacheDeleteConfirm,
+	});
+	if (confirm.canceled) return;
+	await deleteReport(summary.id);
+	await refreshSummaries();
+	if (cachedAt.value === summary.savedAt) {
+		cachedAt.value = null;
+		cachedNotes.value = null;
+		cachedTotals.value = null;
+		stats.value = null;
+		view.value = 'setup';
+	}
+}
+
+function formatSavedAt(iso: string): string {
+	const d = new Date(iso);
+	return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
+}
+
+/** 初回: キャッシュ一覧とリストを読み、同じ条件の保存結果があれば開く */
+async function init(): Promise<void> {
+	await refreshSummaries();
+	await loadLists();
+	if (stats.value != null) return;
+	const hit = summaries.value.find((s) => s.id === reportKey(window.location.host, targets.value));
+	if (hit != null) await openCached(hit);
+}
+
 onActivated(() => {
-	void loadLists();
+	void init();
 });
 
-void loadLists();
+void init();
 
 // ページ離脱時に走っている取得を止める
 onUnmounted(() => {
@@ -639,6 +742,37 @@ onUnmounted(() => {
 	gap: 8px;
 }
 
+.cacheBanner {
+	display: flex;
+	align-items: center;
+	gap: 6px;
+	font-size: 0.85em;
+	color: var(--MI_THEME-accent);
+	background: var(--MI_THEME-accentedBg);
+	border-radius: 8px;
+	padding: 6px 10px;
+}
+
+.cacheRow {
+	display: flex;
+	align-items: center;
+	gap: 8px;
+	padding: 6px 0;
+	border-bottom: solid 1px var(--MI_THEME-divider);
+
+	&:last-child {
+		border-bottom: none;
+	}
+}
+
+.cacheInfo {
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	flex: 1;
+	min-width: 0;
+}
+
 .kpis {
 	display: flex;
 	gap: 8px;
@@ -669,15 +803,15 @@ onUnmounted(() => {
 .chart {
 	display: flex;
 	flex-direction: column;
-	gap: 2px;
+	gap: 8px;
 }
 
+// 1件 = 1行目が絵文字、2行目が棒グラフ（列幅の計算を不要にして、横長絵文字も切れないようにする）
 .row {
-	display: grid;
-	grid-template-columns: 34px minmax(80px, 150px) 1fr 90px;
-	gap: 10px;
-	align-items: center;
-	padding: 3px 4px;
+	display: flex;
+	flex-direction: column;
+	gap: 2px;
+	padding: 4px;
 	border-radius: 8px;
 	cursor: pointer;
 
@@ -686,21 +820,33 @@ onUnmounted(() => {
 	}
 }
 
-.icon {
+.rowEmoji {
 	display: flex;
-	justify-content: center;
-	font-size: 1.5em;
+	align-items: center;
+	justify-content: flex-start;
+	min-height: 32px;
+	font-size: 1.6em;
+	line-height: 1;
+
+	// 幅は枠（カード幅）いっぱいまで使えるので、横長の絵文字も縮小されずに収まる
+	:deep(img) {
+		min-width: 0;
+		width: auto;
+		height: auto;
+		max-width: 100%;
+		max-height: 32px;
+		object-fit: contain;
+	}
 }
 
-.label {
-	font-size: 0.8em;
-	opacity: 0.7;
-	overflow: hidden;
-	text-overflow: ellipsis;
-	white-space: nowrap;
+.rowBar {
+	display: flex;
+	align-items: center;
+	gap: 10px;
 }
 
 .track {
+	flex: 1;
 	height: 20px;
 	background: var(--MI_THEME-bg);
 	border-radius: 6px;
@@ -721,6 +867,7 @@ onUnmounted(() => {
 }
 
 .count {
+	width: 84px;
 	text-align: right;
 	font-variant-numeric: tabular-nums;
 	font-size: 0.9em;
@@ -734,18 +881,33 @@ onUnmounted(() => {
 
 .detailHead {
 	display: flex;
-	align-items: center;
-	gap: 12px;
+	flex-direction: column;
+	gap: 6px;
+}
 
-	>div>b {
-		font-size: 1.1em;
+// 詳細でも絵文字は専用の行に置く（横長のバナー絵文字でも切れないように）
+.detailEmoji {
+	display: flex;
+	align-items: center;
+	justify-content: flex-start;
+	min-height: 48px;
+	font-size: 2em;
+	line-height: 1;
+
+	:deep(img) {
+		min-width: 0;
+		width: auto;
+		height: auto;
+		max-width: 100%;
+		max-height: 64px;
+		object-fit: contain;
 	}
 }
 
-.detailIcon {
-	font-size: 2.2em;
-	display: flex;
-	align-items: center;
+.detailMeta {
+	> b {
+		font-size: 1.1em;
+	}
 }
 
 .noteCard {
@@ -770,12 +932,17 @@ onUnmounted(() => {
 }
 
 @media (max-width: 600px) {
-	.row {
-		grid-template-columns: 28px 1fr 80px;
+	.rowEmoji {
+		min-height: 24px;
+		font-size: 1.4em;
+
+		:deep(img) {
+			max-height: 24px;
+		}
 	}
 
-	.label {
-		display: none;
+	.count {
+		width: 70px;
 	}
 }
 </style>

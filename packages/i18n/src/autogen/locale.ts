@@ -13718,6 +13718,38 @@ export interface Locale extends ILocale {
          * {names} が見つかりませんでした。
          */
         "userNotFound": ParameterizedString<"names">;
+        /**
+         * 保存された集計（このブラウザ）
+         */
+        "cacheTitle": string;
+        /**
+         * {users}人 · {reactions}件
+         */
+        "cacheMeta": ParameterizedString<"users" | "reactions">;
+        /**
+         * 開く
+         */
+        "cacheOpen": string;
+        /**
+         * キャッシュを削除
+         */
+        "cacheDelete": string;
+        /**
+         * このブラウザに保存した集計を削除しますか？
+         */
+        "cacheDeleteConfirm": string;
+        /**
+         * {date} に保存した内容を表示しています（再取得すると更新されます）
+         */
+        "cacheViewing": ParameterizedString<"date">;
+        /**
+         * 集計結果をこのブラウザに保存しました。
+         */
+        "cacheSaved": string;
+        /**
+         * このブラウザには保存できませんでした（ストレージが使えない設定になっている可能性があります）。
+         */
+        "cacheSaveFailed": string;
     };
     /**
      * リサーチ
