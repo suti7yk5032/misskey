@@ -392,11 +392,13 @@ async function run(): Promise<void> {
 
 			let untilId: string | undefined;
 			for (; ;) {
+				// トークンを明示的に渡す（undefined 以外を渡すと $i.token の自動付与が上書きされるため、
+				// null を渡すと未認証扱いになり、非公開ノートへのリアクションが取れなくなる）
 				const page = await misskeyApi('users/reactions', {
 					userId: user.id,
 					limit: PAGE_SIZE,
 					untilId,
-				}, null, ac.signal);
+				}, $i.token, ac.signal);
 
 				for (const r of page) {
 					rows.push({ id: r.id, type: r.type, createdAt: r.createdAt, userId: user.id, note: r.note ?? null });
