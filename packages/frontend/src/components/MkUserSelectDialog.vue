@@ -105,6 +105,7 @@ import { instance } from '@/instance.js';
 
 const emit = defineEmits<{
 	(ev: 'ok', selected: Misskey.entities.UserLite): void;
+	(ev: 'okList', users: Misskey.entities.UserDetailed[]): void;
 	(ev: 'cancel'): void;
 	(ev: 'closed'): void;
 }>();
@@ -153,6 +154,15 @@ function search() {
 }
 
 function ok() {
+	// リストタブ: 選んだリストの全メンバーを返す（従来は selected が null のため何も起きなかった）
+	if (tab.value === 'list') {
+		const users = selectedList.value?.users;
+		if (users == null || users.length === 0) return;
+		emit('okList', users);
+		dialogEl.value?.close();
+		return;
+	}
+
 	const user = selected.value;
 	if (user == null) return;
 

@@ -591,6 +591,28 @@ export async function selectUser(opts: { includeSelf?: boolean; localOnly?: bool
 	});
 }
 
+/**
+ * ユーザー選択ダイアログ（複数対応）。
+ * 個別ユーザーを選べば1件、リストを選べばその全メンバーを返す。
+ */
+export async function selectUsers(opts: { includeSelf?: boolean; localOnly?: boolean; } = {}): Promise<Misskey.entities.UserLite[]> {
+	return new Promise(resolve => {
+		const { dispose } = popup(defineAsyncComponent(() => import('@/components/MkUserSelectDialog.vue')), {
+			includeSelf: opts.includeSelf,
+			localOnly: opts.localOnly,
+			includeUserLists: true,
+		}, {
+			ok: user => {
+				resolve([user]);
+			},
+			okList: users => {
+				resolve(users);
+			},
+			closed: () => dispose(),
+		});
+	});
+}
+
 export async function selectRole(params: ComponentProps<typeof MkRoleSelectDialog_TypeReferenceOnly>): Promise<
 	{ canceled: true; result: undefined; } |
 	{ canceled: false; result: Misskey.entities.Role[] }

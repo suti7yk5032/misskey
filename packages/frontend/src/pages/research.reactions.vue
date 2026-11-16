@@ -296,9 +296,11 @@ function toggle(user: TargetUser): void {
 
 async function pickUser(): Promise<void> {
 	errorText.value = null;
-	const user = await os.selectUser({ includeSelf: true, includeUserLists: true });
-	if (!isSelected(user.id)) {
-		targets.value.push({ id: user.id, username: user.username, name: user.name, host: user.host, avatarUrl: user.avatarUrl });
+	const picked = await os.selectUsers({ includeSelf: true });
+	for (const user of picked) {
+		if (!isSelected(user.id)) {
+			targets.value.push({ id: user.id, username: user.username, name: user.name, host: user.host, avatarUrl: user.avatarUrl });
+		}
 	}
 }
 
