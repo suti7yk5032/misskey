@@ -576,12 +576,13 @@ export function form<F extends Form>(title: string, f: F): Promise<{ canceled: t
 	});
 }
 
-export async function selectUser(opts: { includeSelf?: boolean; localOnly?: boolean; includeUserLists?: boolean; } = {}): Promise<Misskey.entities.UserLite> {
+export async function selectUser(opts: { includeSelf?: boolean; localOnly?: boolean; } = {}): Promise<Misskey.entities.UserLite> {
 	return new Promise(resolve => {
 		const { dispose } = popup(defineAsyncComponent(() => import('@/components/MkUserSelectDialog.vue')), {
 			includeSelf: opts.includeSelf,
 			localOnly: opts.localOnly,
-			includeUserLists: opts.includeUserLists,
+			// リストは複数返すため、単数取得のこちらでは有効にしない（複数なら selectUsers を使う）
+			includeUserLists: false,
 		}, {
 			ok: user => {
 				resolve(user);

@@ -1164,11 +1164,10 @@ function cancel() {
 }
 
 function insertMention() {
-	os.selectUser({ localOnly: localOnly.value, includeSelf: true, includeUserLists: true }).then(user => {
+	// リストを選んだ場合はその全メンバーのメンションをまとめて挿入する
+	os.selectUsers({ localOnly: localOnly.value, includeSelf: true }).then(users => {
 		if (textareaEl.value == null) return;
-		const mentions = Array.isArray(user)
-			? user.map(acct => `@${acct}`).join(' ')
-			: `@${Misskey.acct.toString(user)}`;
+		const mentions = users.map(user => `@${Misskey.acct.toString(user)}`).join(' ');
 		insertTextAtCursor(textareaEl.value, mentions + ' ');
 	});
 }
