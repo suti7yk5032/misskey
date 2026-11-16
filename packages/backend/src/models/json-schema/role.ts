@@ -333,6 +333,10 @@ export const packedRolePoliciesSchema = {
 			type: 'boolean',
 			optional: false, nullable: false,
 		},
+		canAccessResearch: {
+			type: 'boolean',
+			optional: false, nullable: false,
+		},
 	},
 } as const;
 

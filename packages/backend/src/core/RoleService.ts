@@ -74,6 +74,7 @@ export type RolePolicies = {
 	scheduledNoteLimit: number;
 	watermarkAvailable: boolean;
 	canManageAds: boolean;
+	canAccessResearch: boolean;
 };
 
 export const DEFAULT_POLICIES: RolePolicies = {
@@ -123,6 +124,7 @@ export const DEFAULT_POLICIES: RolePolicies = {
 	scheduledNoteLimit: 1,
 	watermarkAvailable: true,
 	canManageAds: false,
+	canAccessResearch: false,
 };
 
 @Injectable()
@@ -455,6 +457,7 @@ export class RoleService implements OnApplicationShutdown, OnModuleInit {
 			scheduledNoteLimit: calc('scheduledNoteLimit', vs => Math.max(...vs)),
 			watermarkAvailable: calc('watermarkAvailable', vs => vs.some(v => v === true)),
 			canManageAds: calc('canManageAds', vs => vs.some(v => v === true)),
+			canAccessResearch: calc('canAccessResearch', vs => vs.some(v => v === true)),
 		};
 	}
 

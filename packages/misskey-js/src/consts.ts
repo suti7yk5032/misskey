@@ -233,6 +233,7 @@ export const rolePolicies = [
 	'scheduledNoteLimit',
 	'watermarkAvailable',
 	'canManageAds',
+	'canAccessResearch',
 ] as const;
 
 export const queueTypes = [

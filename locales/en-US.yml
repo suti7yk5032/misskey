@@ -2148,6 +2148,7 @@ _role:
     scheduledNoteLimit: "Maximum number of simultaneous scheduled notes"
     watermarkAvailable: "Watermark function"
     canManageAds: "Can manage ads"
+    canAccessResearch: "Can access research page"
   _condition:
     roleAssignedTo: "Assigned to manual roles"
     isLocal: "Local user"

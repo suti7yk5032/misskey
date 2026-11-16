@@ -8464,6 +8464,10 @@ export interface Locale extends ILocale {
              * 広告の管理
              */
             "canManageAds": string;
+            /**
+             * リサーチページへのアクセス可否
+             */
+            "canAccessResearch": string;
         };
         "_condition": {
             /**

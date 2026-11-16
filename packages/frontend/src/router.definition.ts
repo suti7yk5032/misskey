@@ -610,7 +610,7 @@ export const ROUTE_DEF = [{
 	loginRequired: true,
 }, {
 	path: '/research',
-	component: page(() => import('@/pages/research.vue')),
+	component: (iAmAdmin || $i?.policies.canAccessResearch) ? page(() => import('@/pages/research.vue')) : page(() => import('@/pages/not-found.vue')),
 	loginRequired: true,
 }, {
 	path: '/reaction-report',

@@ -215,11 +215,6 @@ export const navbarItemDef = reactive<{
 			window.history.back();
 		},
 	},
-	research: {
-		title: i18n.ts.research,
-		icon: 'ti ti-flask',
-		to: '/research',
-	},
 });
 
 if (iAmAdmin || $i?.policies.canManageCustomEmojis) {
@@ -238,6 +233,16 @@ if (iAmAdmin || $i?.policies.canManageAds) {
 			title: i18n.ts.adsManager,
 			icon: 'ti ti-ad',
 			to: '/ads_manager',
+		},
+	});
+}
+
+if (iAmAdmin || $i?.policies.canAccessResearch) {
+	Object.assign(navbarItemDef, {
+		research: {
+			title: i18n.ts.research,
+			icon: 'ti ti-flask',
+			to: '/research',
 		},
 	});
 }

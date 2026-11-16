@@ -2196,6 +2196,7 @@ _role:
     scheduledNoteLimit: "予約投稿の同時作成可能数"
     watermarkAvailable: "ウォーターマーク機能の使用可否"
     canManageAds: "広告の管理"
+    canAccessResearch: "リサーチページへのアクセス可否"
   _condition:
     roleAssignedTo: "マニュアルロールにアサイン済み"
     isLocal: "ローカルユーザー"

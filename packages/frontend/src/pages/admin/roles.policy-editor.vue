@@ -407,6 +407,16 @@ SPDX-License-Identifier: AGPL-3.0-only
 			</MkSwitch>
 		</template>
 	</XFolder>
+
+	<XFolder v-if="matchQuery([i18n.ts._role._options.canAccessResearch, 'canAccessResearch'])" v-model:policyMeta="policyMetaModel.canAccessResearch" :isBaseRole="isBaseRole" :readonly="readonly">
+		<template #label>{{ i18n.ts._role._options.canAccessResearch }}</template>
+		<template #valueText>{{ valuesModel.canAccessResearch ? i18n.ts.yes : i18n.ts.no }}</template>
+		<template #default="{ disabled }">
+			<MkSwitch v-model="valuesModel.canAccessResearch" :disabled="disabled">
+				<template #label>{{ i18n.ts.enable }}</template>
+			</MkSwitch>
+		</template>
+	</Xfolder>
 </div>
 </template>
 
