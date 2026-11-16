@@ -28,36 +28,6 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<MkButton @click="pickUser"><i class="ti ti-user-plus"></i> {{ i18n.ts.selectUser }}</MkButton>
 				</div>
 				<div v-if="errorText" :class="$style.error">{{ errorText }}</div>
-
-				<div :class="$style.sectionTitle">{{ i18n.ts._reactionReport.fromLists }}</div>
-				<div v-if="listsError" :class="$style.error">{{ listsError }}</div>
-				<div v-else-if="lists.length === 0" :class="$style.hint">{{ i18n.ts._reactionReport.noLists }}</div>
-				<div v-else :class="$style.lists">
-					<div v-for="list in lists" :key="list.id" :class="$style.listCard">
-						<div :class="$style.listHead">
-							<b>{{ list.name }}</b>
-							<span :class="$style.hint">{{ list.members.length }}</span>
-							<MkButton small @click="toggleList(list, !isListSelected(list))">
-								{{ isListSelected(list) ? i18n.ts._reactionReport.removeAll : i18n.ts._reactionReport.addAll }}
-							</MkButton>
-						</div>
-						<div :class="$style.chips">
-							<span
-								v-for="m in list.members" :key="m.id"
-								:class="[$style.member, isSelected(m.id) ? $style.memberOn : null]"
-							>
-								<MkMention :username="m.username" :host="m.host ?? localHost"/>
-								<button
-									type="button" :class="[$style.memberToggle, isSelected(m.id) ? $style.memberToggleOn : null]"
-									:title="isSelected(m.id) ? i18n.ts._reactionReport.removeUser : i18n.ts._reactionReport.add"
-									:aria-pressed="isSelected(m.id)" @click.prevent="toggle(m)"
-								>
-									<i :class="isSelected(m.id) ? 'ti ti-minus' : 'ti ti-plus'"></i>
-								</button>
-							</span>
-						</div>
-					</div>
-				</div>
 			</div>
 
 			<MkButton primary large :disabled="targets.length === 0" @click="run">
@@ -254,8 +224,6 @@ const targets = ref<TargetUser[]>([{
 	host: $i.host,
 	avatarUrl: $i.avatarUrl,
 }]);
-const lists = ref<{ id: string; name: string; members: TargetUser[] }[]>([]);
-const listsError = ref<string | null>(null);
 const errorText = ref<string | null>(null);
 const running = ref(false);
 const progress = ref({ index: 0, total: 0, fetched: 0, current: '' });
@@ -320,49 +288,17 @@ function isSelected(id: string): boolean {
 	return targets.value.some((u) => u.id === id);
 }
 
-function isListSelected(list: { members: TargetUser[] }): boolean {
-	return list.members.length > 0 && list.members.every((m) => isSelected(m.id));
-}
-
 function toggle(user: TargetUser): void {
 	const index = targets.value.findIndex((u) => u.id === user.id);
 	if (index >= 0) targets.value.splice(index, 1);
 	else targets.value.push(user);
 }
 
-function toggleList(list: { members: TargetUser[] }, add: boolean): void {
-	if (add) {
-		for (const m of list.members) if (!isSelected(m.id)) targets.value.push(m);
-	} else {
-		targets.value = targets.value.filter((u) => !list.members.some((m) => m.id === u.id));
-	}
-}
-
 async function pickUser(): Promise<void> {
 	errorText.value = null;
-	const user = await os.selectUser({ includeSelf: true });
+	const user = await os.selectUser({ includeSelf: true, includeUserLists: true });
 	if (!isSelected(user.id)) {
 		targets.value.push({ id: user.id, username: user.username, name: user.name, host: user.host, avatarUrl: user.avatarUrl });
-	}
-}
-
-async function loadLists(): Promise<void> {
-	if (lists.value.length > 0) return;
-	try {
-		const raw = await misskeyApi('users/lists/list');
-		const ids = [...new Set(raw.flatMap((l) => l.userIds ?? []))];
-		const users = ids.length > 0 ? await misskeyApi('users/show', { userIds: ids }) : [];
-		const byId = new Map(users.map((u) => [u.id, u]));
-		lists.value = raw.map((l) => ({
-			id: l.id,
-			name: l.name,
-			members: (l.userIds ?? [])
-				.map((id) => byId.get(id))
-				.filter((u): u is Misskey.entities.UserDetailed => u != null)
-				.map((u) => ({ id: u.id, username: u.username, name: u.name, host: u.host, avatarUrl: u.avatarUrl })),
-		}));
-	} catch (err) {
-		listsError.value = err instanceof Error ? err.message : String(err);
 	}
 }
 
@@ -530,10 +466,9 @@ function formatSavedAt(iso: string): string {
 	return Number.isNaN(d.getTime()) ? iso : d.toLocaleString();
 }
 
-/** 初回: キャッシュ一覧とリストを読み、同じ条件の保存結果があれば開く */
+/** 初回: キャッシュ一覧を読み、同じ条件の保存結果があれば開く */
 async function init(): Promise<void> {
 	await refreshSummaries();
-	await loadLists();
 	if (stats.value != null) return;
 	const hit = summaries.value.find((s) => s.id === reportKey(window.location.host, targets.value));
 	if (hit != null) await openCached(hit);
@@ -627,82 +562,6 @@ onUnmounted(() => {
 
 	> :first-child {
 		flex: 1;
-	}
-}
-
-.lists {
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.listCard {
-	border: solid 1px var(--MI_THEME-divider);
-	border-radius: 8px;
-	padding: 10px 12px;
-	display: flex;
-	flex-direction: column;
-	gap: 8px;
-}
-
-.listHead {
-	display: flex;
-	align-items: center;
-	gap: 8px;
-
-	>b {
-		font-size: 0.95em;
-	}
-
-	> :last-child {
-		margin-left: auto;
-	}
-}
-
-.member {
-	display: inline-flex;
-	align-items: center;
-	gap: 2px;
-	border-radius: 999px;
-	outline: 2px solid transparent;
-	outline-offset: 1px;
-
-	&:hover {
-		outline-color: var(--MI_THEME-divider);
-	}
-}
-
-.memberOn {
-	outline-color: var(--MI_THEME-accent);
-}
-
-.memberToggle {
-	display: inline-flex;
-	align-items: center;
-	justify-content: center;
-	width: 22px;
-	height: 22px;
-	border: solid 1px var(--MI_THEME-divider);
-	border-radius: 50%;
-	background: var(--MI_THEME-panel);
-	color: var(--MI_THEME-fgTransparentWeak);
-	cursor: pointer;
-	font-size: 0.8em;
-	line-height: 1;
-
-	&:hover {
-		border-color: var(--MI_THEME-accent);
-		color: var(--MI_THEME-accent);
-	}
-}
-
-.memberToggleOn {
-	border-color: var(--MI_THEME-accent);
-	color: var(--MI_THEME-accent);
-
-	&:hover {
-		border-color: var(--MI_THEME-error);
-		color: var(--MI_THEME-error);
 	}
 }
 
