@@ -25,10 +25,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				</div>
 
 				<div :class="$style.addRow">
-					<MkInput v-model="nameInput" :placeholder="i18n.ts._reactionReport.addUser">
-						<template #prefix><i class="ti ti-user-plus"></i></template>
-					</MkInput>
-					<MkButton :disabled="nameInput.trim() === ''" @click="addNames">{{ i18n.ts._reactionReport.add }}</MkButton>
+					<MkButton @click="pickUser"><i class="ti ti-user-plus"></i> {{ i18n.ts.selectUser }}</MkButton>
 				</div>
 				<div v-if="errorText" :class="$style.error">{{ errorText }}</div>
 
@@ -219,7 +216,6 @@ import * as Misskey from 'misskey-js';
 import { host as localHost } from '@@/js/config.js';
 import type { EmojiStat, ReportStats, TargetUser } from '@/scripts/reaction-report/types.js';
 import MkButton from '@/components/MkButton.vue';
-import MkInput from '@/components/MkInput.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkMention from '@/components/MkMention.vue';
 import MkReactionIcon from '@/components/MkReactionIcon.vue';
@@ -258,7 +254,6 @@ const targets = ref<TargetUser[]>([{
 	host: $i.host,
 	avatarUrl: $i.avatarUrl,
 }]);
-const nameInput = ref('');
 const lists = ref<{ id: string; name: string; members: TargetUser[] }[]>([]);
 const listsError = ref<string | null>(null);
 const errorText = ref<string | null>(null);
@@ -343,29 +338,11 @@ function toggleList(list: { members: TargetUser[] }, add: boolean): void {
 	}
 }
 
-async function addNames(): Promise<void> {
+async function pickUser(): Promise<void> {
 	errorText.value = null;
-	const names = nameInput.value.split(/[,\s、]+/u).map((s) => s.trim().replace(/^@/u, '')).filter((s) => s !== '');
-	nameInput.value = '';
-	const failed: string[] = [];
-
-	for (const name of names) {
-		if (name.includes('@')) {
-			failed.push(name);
-			continue;
-		}
-		try {
-			const user = await misskeyApi('users/show', { username: name });
-			if (!isSelected(user.id)) {
-				targets.value.push({ id: user.id, username: user.username, name: user.name, host: user.host, avatarUrl: user.avatarUrl });
-			}
-		} catch {
-			failed.push(name);
-		}
-	}
-
-	if (failed.length > 0) {
-		errorText.value = i18n.tsx._reactionReport.userNotFound({ names: failed.map((n) => `@${n}`).join(', ') });
+	const user = await os.selectUser({ includeSelf: true });
+	if (!isSelected(user.id)) {
+		targets.value.push({ id: user.id, username: user.username, name: user.name, host: user.host, avatarUrl: user.avatarUrl });
 	}
 }
 
