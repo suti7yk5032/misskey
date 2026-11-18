@@ -1602,6 +1602,7 @@ _settings:
   settingsPersistence_description2: "環境によっては有効化できない場合があります。"
   unlimitSubscribeNotes: "タイムライン上のノートを全て購読する"
   autoplayEmbededPlayerOfUrlPreview: "URLプレビューの埋め込みプレイヤーを自動再生"
+  expandUrlPreviewAutomatically: "URLプレビューを自動展開"
 
   _chat:
     showSenderName: "送信者の名前を表示"

@@ -64,7 +64,8 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<template v-else>
 					<img
 						v-if="(!originalContentLoaded || !thumbnailContentLoaded) && (content.thumbnailUrl != null)"
-						:class="$style.content"
+						ref="thumbnailEl"
+						:class="[$style.content, $style.thumbnail]"
 						:src="content.thumbnailUrl"
 						draggable="false"
 						@load="thumbnailContentLoaded = true"
@@ -73,6 +74,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 					<template v-if="activated">
 						<img
 							v-if="content.type === 'image'"
+							ref="imageEl"
 							:class="[$style.content, { [$style.pixelatedZoom]: pixelatedZoom }]"
 							:src="content.url"
 							:alt="content.file?.comment ?? undefined"
@@ -198,11 +200,11 @@ export function calculateSourceTransform({
 
 <script lang="ts" setup>
 import { computed, nextTick, ref, useTemplateRef, markRaw, watch, provide, onBeforeUnmount, defineAsyncComponent } from 'vue';
-import XControl from './MkLightbox.item.controls.vue';
-import XFileInfo from './MkLightbox.item.fileinfo.vue';
-import type XAudioVisualizer__TypeReferenceOnly from './MkLightbox.item.audio-visualizer.vue';
-import type { MenuItem } from '@/types/menu.js';
 import MkBlurhash from '@/components/MkBlurhash.vue';
+import XControl from './MkLightbox.item.controls.vue';
+import type XAudioVisualizer__TypeReferenceOnly from './MkLightbox.item.audio-visualizer.vue';
+import XFileInfo from './MkLightbox.item.fileinfo.vue';
+import type { MenuItem } from '@/types/menu.js';
 import { DI } from '@/di.js';
 import * as os from '@/os.js';
 import { prefer } from '@/preferences.js';
@@ -238,6 +240,8 @@ const pixelatedZoom = defineModel<boolean>('pixelatedZoom', { required: true });
 
 const rootEl = useTemplateRef('rootEl');
 const mainEl = useTemplateRef('mainEl');
+const imageEl = useTemplateRef('imageEl');
+const thumbnailEl = useTemplateRef('thumbnailEl');
 const videoEl = useTemplateRef('videoEl');
 const audioEl = useTemplateRef('audioEl'); // ネイティブUI時
 const audioVisualizer = useTemplateRef<InstanceType<typeof XAudioVisualizer__TypeReferenceOnly>>('audioVisualizer'); // ネイティブUIじゃない場合
@@ -301,7 +305,7 @@ const contentHideFileText = computed(() => {
 const videoAspectRatio = ref<number | null>(
 	props.content.width != null && props.content.height != null && props.content.width > 0 && props.content.height > 0
 		? props.content.width / props.content.height
-		: null,
+		: null
 );
 
 function onVideoLoadedMetadata() {
@@ -554,6 +558,7 @@ const VELOCITY_WINDOW = 100;
 let isDragging = false;
 let isClick = false;
 let clickAction: 'hidden' | 'media' | null = null;
+let isBackgroundTap = false;
 let lastX = 0;
 let lastY = 0;
 let currentPointerId: number | null = null;
@@ -561,8 +566,6 @@ let currentPointerStartOffset = { x: 0, y: 0 };
 let isVerticalSwiping = false;
 let isHorizontalSwiping = false;
 let horizontalSwipeDelta = 0;
-let singleTapCloseTimer: number | null = null;
-let touchClicksToIgnore = 0;
 /** 軸が確定した時点のポインタ位置。ここを基準にスワイプ量を測ることで、確定時に描画が飛ぶのを防ぐ */
 let swipeOrigin = { x: 0, y: 0 };
 
@@ -610,14 +613,45 @@ function resolveClickAction(target: EventTarget | null): 'hidden' | 'media' | nu
 	return null;
 }
 
+function isOutsideImage(x: number, y: number): boolean {
+	if (props.content.type !== 'image' || hide.value) return false;
+	const image = imageEl.value?.naturalWidth && imageEl.value.naturalHeight
+		? imageEl.value
+		: thumbnailEl.value ?? imageEl.value;
+	if (image == null) return false;
+
+	const width = image.naturalWidth || props.content.width;
+	const height = image.naturalHeight || props.content.height;
+	if (width == null || height == null || !Number.isFinite(width) || !Number.isFinite(height) || width <= 0 || height <= 0) return false;
+
+	// img自体は余白を含む。変形後の矩形からobject-fit: containで描画される範囲を求める。
+	const rect = image.getBoundingClientRect();
+	if (!isValidRect(rect)) return false;
+	const scale = Math.min(rect.width / width, rect.height / height);
+	const left = rect.left + (rect.width - width * scale) / 2;
+	const top = rect.top + (rect.height - height * scale) / 2;
+	return x < left || x > left + width * scale || y < top || y > top + height * scale;
+}
+
+function isOutsideContent(x: number, y: number): boolean {
+	if (props.content.type !== 'video') return isOutsideImage(x, y);
+	if (hide.value || videoEl.value == null || videoAspectRatio.value == null) return false;
+
+	// 動画要素は縦横比に合わせてサイズを指定しているため、要素の矩形が描画範囲になる。
+	const rect = videoEl.value.getBoundingClientRect();
+	if (!isValidRect(rect)) return false;
+	return x < rect.left || x > rect.right || y < rect.top || y > rect.bottom;
+}
+
 function onPointerdown(ev: PointerEvent) {
 	if (mainEl.value == null) return;
 	pointerEventCache.set(ev.pointerId, ev);
 	mainEl.value.setPointerCapture(ev.pointerId);
 
 	isDragging = true;
-	isClick = true;
+	isClick = pointerEventCache.size === 1;
 	clickAction = resolveClickAction(ev.target);
+	isBackgroundTap = isClick && isOutsideContent(ev.clientX, ev.clientY);
 	lastX = ev.clientX;
 	lastY = ev.clientY;
 	pointerVec = { x: 0, y: 0 };
@@ -726,6 +760,7 @@ function onPointermove(ev: PointerEvent) {
 
 function onPointerup(ev: PointerEvent) {
 	if (mainEl.value == null) return;
+	isBackgroundTap = isBackgroundTap && isOutsideContent(ev.clientX, ev.clientY);
 	pointerEventCache.delete(ev.pointerId);
 	mainEl.value.releasePointerCapture(ev.pointerId);
 	prevTwoTouchPointsDistance = 0;
@@ -773,14 +808,6 @@ function onPointerup(ev: PointerEvent) {
 
 const doubleTapDetector = makeDoubleTapDetector((ev) => {
 	pointerVec = { x: 0, y: 0 };
-	const touchClickCount = resolveClickAction(ev.target) == null
-		? (singleTapCloseTimer == null ? 2 : 1)
-		: 0;
-	if (singleTapCloseTimer != null) {
-		window.clearTimeout(singleTapCloseTimer);
-		singleTapCloseTimer = null;
-	}
-	touchClicksToIgnore = touchClickCount;
 
 	if (isZooming.value) {
 		isZooming.value = false;
@@ -802,6 +829,7 @@ function cancelPointerGesture() {
 	isDragging = false;
 	isClick = false;
 	clickAction = null;
+	isBackgroundTap = false;
 	pointerVec = { x: 0, y: 0 };
 	velocitySamples = [];
 	horizontalSwipeDelta = 0;
@@ -815,6 +843,10 @@ function cancelPointerGesture() {
 }
 
 function onTouchstart(ev: TouchEvent) {
+	if ((props.content.type === 'image' || props.content.type === 'video') && (ev.touches.length !== 1 || isOutsideContent(ev.touches[0].clientX, ev.touches[0].clientY))) {
+		doubleTapDetector.reset();
+		return;
+	}
 	doubleTapDetector.onTouchstart(ev);
 }
 
@@ -901,43 +933,31 @@ watch(rootEl, (newRootEl) => {
 }, { immediate: true });
 
 function onClick(ev: MouseEvent) {
-	if (!isClick) return;
-
+	const wasClick = isClick;
+	const wasBackgroundTap = isBackgroundTap;
 	const action = clickAction ?? resolveClickAction(ev.target);
+	isClick = false;
 	clickAction = null;
+	isBackgroundTap = false;
+	if (!wasClick) return;
 
 	if (action === 'hidden') {
 		void onHiddenClick();
 		return;
 	}
 
-	if (action === 'media') {
+	if (action === 'media' && !wasBackgroundTap) {
 		onMediaClick();
 		return;
 	}
 
-	if (isTouchUsing && touchClicksToIgnore > 0) {
-		touchClicksToIgnore--;
-		return;
-	}
-
-	const closeOrReset = () => {
+	if (!isTouchUsing || wasBackgroundTap) {
 		if (isZooming.value) {
 			isZooming.value = false;
 			resetToNeutral();
 		} else {
 			closeThis();
 		}
-	};
-
-	if (isTouchUsing) {
-		// ダブルタップの2回目のtouchstartでズームできるよう、単発タップの確定を待つ
-		singleTapCloseTimer = window.setTimeout(() => {
-			singleTapCloseTimer = null;
-			closeOrReset();
-		}, 190);
-	} else {
-		closeOrReset();
 	}
 }
 
@@ -1045,9 +1065,6 @@ function onDeactive() {
 }
 
 onBeforeUnmount(() => {
-	if (singleTapCloseTimer != null) {
-		window.clearTimeout(singleTapCloseTimer);
-	}
 	if (rafHandle) {
 		window.cancelAnimationFrame(rafHandle);
 	}
