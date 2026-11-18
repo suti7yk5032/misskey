@@ -117,7 +117,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 				<div v-else :class="$style.chart">
 					<div v-for="emoji in shownEmojis" :key="emoji.type" :class="$style.row" @click="openEmoji(emoji)">
 						<div :class="$style.rowEmoji">
-							<MkReactionIcon :reaction="emoji.type" />
+							<MkReactionIcon :reaction="emoji.type"/>
 						</div>
 						<div :class="$style.rowBar">
 							<span :class="$style.track">
@@ -147,7 +147,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 			<div class="_panel" :class="$style.block">
 				<div :class="$style.detailHead">
 					<div :class="$style.detailEmoji">
-						<MkReactionIcon :reaction="selectedEmoji.type" />
+						<MkReactionIcon :reaction="selectedEmoji.type"/>
 					</div>
 					<div :class="$style.detailMeta">
 						<b>{{ reactionLabel(selectedEmoji.type) }}</b>
@@ -185,6 +185,7 @@ import { computed, onActivated, onUnmounted, ref } from 'vue';
 import * as Misskey from 'misskey-js';
 import { host as localHost } from '@@/js/config.js';
 import type { EmojiStat, ReportStats, TargetUser } from '@/scripts/reaction-report/types.js';
+import type { NoteListEntry, ReportSummary } from '@/scripts/reaction-report/snapshot.js';
 import MkButton from '@/components/MkButton.vue';
 import MkInfo from '@/components/MkInfo.vue';
 import MkMention from '@/components/MkMention.vue';
@@ -197,7 +198,6 @@ import { ensureSignin } from '@/i.js';
 import { aggregate } from '@/scripts/reaction-report/aggregate.js';
 import { reactionLabel } from '@/scripts/reaction-report/emoji-type.js';
 import { buildSnapshot, reportKey, toSummary, MAX_NOTES_PER_EMOJI } from '@/scripts/reaction-report/snapshot.js';
-import type { NoteListEntry, ReportSummary } from '@/scripts/reaction-report/snapshot.js';
 import { deleteReport, getReport, listReports, saveReport } from '@/scripts/reaction-report/cache.js';
 
 const $i = ensureSignin();
@@ -296,7 +296,7 @@ function toggle(user: TargetUser): void {
 
 async function pickUser(): Promise<void> {
 	errorText.value = null;
-	const picked = await os.selectUsers({ includeSelf: true });
+	const picked = await os.selectUsers({ includeSelf: true, localOnly: true });
 	for (const user of picked) {
 		if (!isSelected(user.id)) {
 			targets.value.push({ id: user.id, username: user.username, name: user.name, host: user.host, avatarUrl: user.avatarUrl });

@@ -7,7 +7,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 <MkModalWindow
 	ref="dialogEl"
 	:withOkButton="true"
-	:okButtonDisabled="tab === 'user' ? selected == null : selectedList == null"
+	:okButtonDisabled="tab === 'user' ? selected == null : selectedListUsers.length === 0"
 	@click="cancel()"
 	@close="cancel()"
 	@ok="ok()"
@@ -156,9 +156,9 @@ function search() {
 function ok() {
 	// リストタブ: 選んだリストの全メンバーを返す（従来は selected が null のため何も起きなかった）
 	if (tab.value === 'list') {
-		const users = selectedList.value?.users;
-		if (users == null || users.length === 0) return;
-		emit('okList', users);
+		const filteredUsers = selectedListUsers.value;
+		if (filteredUsers.length === 0) return;
+		emit('okList', filteredUsers);
 		dialogEl.value?.close();
 		return;
 	}
@@ -182,12 +182,22 @@ function cancel() {
 	dialogEl.value?.close();
 }
 
+const selectedListUsers = computed(() => {
+	if (selectedList.value == null) return [];
+	return filterForLocalOnly(selectedList.value.users);
+});
+
+function filterForLocalOnly<T extends { host: string | null }>(items: T[]): T[] {
+	if (!computedLocalOnly.value) return items;
+	return items.filter(item => item.host == null);
+}
+
 onMounted(() => {
 	if (props.includeUserLists) {
 		misskeyApi('users/lists/list').then(lists => {
 			Promise.all(lists.map(async list => ({
 				...list,
-				users: await misskeyApi('users/show', { userIds: list.userIds ?? [] }),
+				users: filterForLocalOnly(await misskeyApi('users/show', { userIds: list.userIds ?? [] })),
 			}))).then(listsWithUsers => {
 				userLists.value = listsWithUsers;
 			});
