@@ -10,7 +10,7 @@ SPDX-License-Identifier: AGPL-3.0-only
 	</template>
 	<template #header>
 		<span>{{ headerTitle }}</span>
-		<i v-if="widgetProps.syncTime" class="ti ti-refresh" style="margin-left: 6px; opacity: 0.7;" :title="i18n.ts.recallSyncTime"/>
+		<i v-if="widgetProps.syncTime" class="ti ti-refresh" style="margin-left: 6px; opacity: 0.7;" :title="i18n.ts.recallSyncTime"></i>
 	</template>
 	<div v-if="paginatorForNotes">
 		<MkNotesTimeline :key="tlKey" :paginator="paginatorForNotes" :withControl="false"/>
